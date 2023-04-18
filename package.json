@@ -25,13 +25,15 @@
         "@nestjs/mapped-types": "^1.0.0",
         "@nestjs/mongoose": "^9.0.1",
         "@nestjs/platform-express": "^8.2.3",
+        "@nestjs/swagger": "^6.3.0",
         "class-validator": "^0.13.2",
         "dotenv": "^10.0.0",
         "mongoose": "^6.0.14",
         "nest": "^0.1.6",
         "reflect-metadata": "^0.1.13",
         "rimraf": "^3.0.2",
-        "rxjs": "^7.4.0"
+        "rxjs": "^7.4.0",
+        "swagger-ui-express": "^4.6.2"
     },
     "devDependencies": {
         "@nestjs/common": "^8.2.3",

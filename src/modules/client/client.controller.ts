@@ -2,10 +2,12 @@ import { BadRequestException, Body, Controller, Get, HttpStatus, Param, Post, Qu
 import { InjectConnection } from '@nestjs/mongoose';
 import { Response } from 'express';
 import { Connection, Schema as MongooseSchema } from 'mongoose';
+import { ApiTags } from '@nestjs/swagger';
 import { GetQueryDto } from '../../dto/getQueryDto';
 import { ClientService } from './client.service';
 import { CreateClientDto } from './dto/createClient.dto';
 
+@ApiTags('Clients')
 @Controller('client')
 export class ClientController {
     constructor(@InjectConnection() private readonly mongoConnection: Connection, private clientService: ClientService) {}
