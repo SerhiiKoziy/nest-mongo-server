@@ -2,11 +2,13 @@ import { BadRequestException, Body, Controller, Get, HttpStatus, Param, Post, Pu
 import { InjectConnection } from '@nestjs/mongoose';
 import { Response } from 'express';
 import { Connection, Schema as MongooseSchema } from 'mongoose';
+import { ApiTags } from "@nestjs/swagger";
 import { GetQueryDto } from '../../dto/getQueryDto';
 import { CreateProductDto } from './dto/createProduct.dto';
 import { UpdateProductDto } from './dto/updateProduct.dto';
 import { ProductService } from './product.service';
 
+@ApiTags('Products')
 @Controller('product')
 export class ProductController {
     constructor(@InjectConnection() private readonly mongoConnection: Connection, private productService: ProductService) {}
