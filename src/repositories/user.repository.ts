@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { ClientSession, Model, Schema as MongooseSchema } from 'mongoose';
 import { User } from '../entities/user.entity';
 import { CreateUserDto } from '../modules/user/dto/createUser.dto';
+import {GetQueryDto} from "../dto/getQueryDto";
 
 export class UserRepository {
     constructor(@InjectModel(User.name) private readonly userModel: Model<User>) {}
@@ -57,5 +58,56 @@ export class UserRepository {
         }
 
         return user;
+    }
+
+    async getUsers(query: GetQueryDto) {
+        let from = query.from || 0;
+        from = Number(from);
+
+        let limit = query.limit || 0;
+        limit = Number(limit);
+
+        let users: User[];
+
+        try {
+            if (limit === 0) {
+                users = await this.userModel
+                  .find()
+                  // .populate('client')
+                  // .populate('user', 'name email')
+                  .skip(from)
+                  .sort({ createdAt: -1 })
+                  .exec();
+            } else {
+                users = await this.userModel
+                  .find()
+                  // .populate('client')
+                  // .populate('user', 'name email')
+                  .skip(from)
+                  .limit(limit)
+                  .sort({ createdAt: -1 })
+                  .exec();
+            }
+
+            let response;
+
+            if (users.length > 0) {
+                response = {
+                    ok: true,
+                    data: users,
+                    message: 'Get Products Ok!',
+                };
+            } else {
+                response = {
+                    ok: true,
+                    data: [],
+                    message: 'No hay products',
+                };
+            }
+
+            return response;
+        } catch (error) {
+            throw new InternalServerErrorException(error);
+        }
     }
 }

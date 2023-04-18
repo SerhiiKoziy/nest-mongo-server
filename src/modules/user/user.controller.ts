@@ -1,9 +1,10 @@
-import { BadRequestException, Body, Controller, Get, HttpStatus, Param, Post, Res } from '@nestjs/common';
+import {BadRequestException, Body, Controller, Get, HttpStatus, Param, Post, Query, Res} from '@nestjs/common';
 import { InjectConnection } from '@nestjs/mongoose';
 import { Response } from 'express';
 import { Connection, Schema as MongooseSchema } from 'mongoose';
 import { CreateUserDto } from './dto/createUser.dto';
 import { UserService } from './user.service';
+import {GetQueryDto} from "../../dto/getQueryDto";
 
 @Controller('user')
 export class UserController {
@@ -11,7 +12,6 @@ export class UserController {
 
     @Post('/createUser')
     async createUser(@Body() createUserDto: CreateUserDto, @Res() res: Response) {
-        console.log('1111')
         const session = await this.mongoConnection.startSession();
         session.startTransaction();
         try {
@@ -27,8 +27,16 @@ export class UserController {
     }
 
     @Get('/getUserById/:id')
-    async getCompanyById(@Param('id') id: MongooseSchema.Types.ObjectId, @Res() res: Response) {
+    async getUserById(@Param('id') id: MongooseSchema.Types.ObjectId, @Res() res: Response) {
         const user: any = await this.userService.getUserById(id);
+
         return res.status(HttpStatus.OK).send(user);
+    }
+
+    @Get('/all')
+    async getUsers(@Query() getQueryDto: GetQueryDto, @Res() res: any) {
+        const users: any = await this.userService.getUsers(getQueryDto);
+
+        return res.status(HttpStatus.OK).send(users);
     }
 }
