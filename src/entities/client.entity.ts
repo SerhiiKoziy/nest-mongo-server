@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
 
-import { User } from './user.entity';
+import { User } from '../modules/user/user.model';
 
 @Schema()
 export class Client extends Document {

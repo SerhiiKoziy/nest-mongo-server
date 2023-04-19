@@ -3,7 +3,7 @@ import { Document, Schema as MongooseSchema } from 'mongoose';
 
 import { Client } from './client.entity';
 import { Product } from './product.entity';
-import { User } from './user.entity';
+import { User } from '../modules/user/user.model';
 
 @Schema()
 export class Sale extends Document {

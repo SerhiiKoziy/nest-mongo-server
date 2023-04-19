@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
 
 import { Client } from './client.entity';
-import { User } from './user.entity';
+import { User } from '../modules/user/user.model';
 
 @Schema()
 export class Product extends Document {
