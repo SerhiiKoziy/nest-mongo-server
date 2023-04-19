@@ -5,7 +5,7 @@ import { Connection, Schema as MongooseSchema } from 'mongoose';
 import { CreateUserDto } from './dto/createUser.dto';
 import { UserService } from './user.service';
 import { GetQueryDto } from "../../dto/getQueryDto";
-import { User } from "../../entities/user.entity";
+import { User } from "./user.model";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 
 @ApiTags('Users')

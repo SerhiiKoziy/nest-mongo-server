@@ -2,7 +2,7 @@ import { IsNotEmpty, IsOptional, IsPositive } from 'class-validator';
 
 export class GetUsersDto {
     @IsNotEmpty()
-    role: string;
+    roles: string;
 
     @IsOptional()
     from: number;

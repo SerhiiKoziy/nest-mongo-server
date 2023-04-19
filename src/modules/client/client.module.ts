@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
 import { Client, ClientSchema } from '../../entities/client.entity';
-import { User, UserSchema } from '../../entities/user.entity';
+import { User, UserSchema } from '../user/user.model';
 import { ClientRepository } from '../../repositories/client.repository';
 import { UserModule } from '../user/user.module';
 import { ClientController } from './client.controller';

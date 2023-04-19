@@ -1,9 +1,9 @@
 import { ConflictException, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { ClientSession, Model, Schema as MongooseSchema } from 'mongoose';
-import { User } from '../entities/user.entity';
-import { CreateUserDto } from '../modules/user/dto/createUser.dto';
-import {GetQueryDto} from "../dto/getQueryDto";
+import { User } from './user.model';
+import { CreateUserDto } from './dto/createUser.dto';
+import { GetQueryDto } from "../../dto/getQueryDto";
 
 export class UserRepository {
     constructor(@InjectModel(User.name) private readonly userModel: Model<User>) {}
@@ -18,7 +18,6 @@ export class UserRepository {
         user = new this.userModel({
             name: createUserDto.name,
             email: createUserDto.email,
-            role: createUserDto.role,
         });
 
         try {

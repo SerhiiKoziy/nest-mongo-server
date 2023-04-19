@@ -5,7 +5,7 @@ import { UpdateProductDto } from '../product/dto/updateProduct.dto';
 import { ProductService } from '../product/product.service';
 import { UserService } from '../user/user.service';
 import { CreateSaleDto } from './dto/createSale.dto';
-import { User } from "../../entities/user.entity";
+import { User } from "../user/user.model";
 
 @Injectable()
 export class SaleService {
@@ -16,9 +16,10 @@ export class SaleService {
 
         const getUser: User = await this.userService.getUserById(userId);
 
-        if (getUser.role !== 'ADMIN') {
-            throw new UnauthorizedException('Incorrect Role');
-        }
+        //TODO
+        // if (getUser.role !== 'ADMIN') {
+        //     throw new UnauthorizedException('Incorrect Role');
+        // }
 
         const product = await this.productService.getProductById(productId);
         const createdSale = await this.saleRepository.createSale(createSaleDto, product, userId, session);
