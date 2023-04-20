@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-// import { User } from "../entities/user.entity";
+import { User } from "../user/user.model";
 
 @Schema()
 export class Role extends Document {
@@ -11,8 +11,8 @@ export class Role extends Document {
   description: string;
 
   // @BelongsToMany(() => User, () => UserRoles)
-  // users: User[];
-  // users: [{ type: Types.ObjectId, ref: 'User' }];
+  // users: [User];
+  users: [{ type: Types.ObjectId, ref: 'User' }];
 }
 
 export const RoleSchema = SchemaFactory.createForClass(Role);
