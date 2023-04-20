@@ -19,6 +19,8 @@ import { GetQueryDto } from "../../dto/getQueryDto";
 import { User } from "./user.model";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import {JwtAuthGuard} from "../auth/jwt-auth.guard";
+import {RoleGuard} from "../auth/roles.guard";
+import {Role} from "../auth/roles-auth.decorator";
 
 @ApiTags('Users')
 @Controller('user')
@@ -55,16 +57,17 @@ export class UserController {
 
     @ApiOperation({ summary: 'Get all users' })
     @ApiResponse({ status: 200, type: [User] })
-    @Get('/all')
-    async getUsers(@Query() getQueryDto: GetQueryDto, @Res() res: any) {
-        const users: any = await this.userService.getUsers(getQueryDto);
+    @Get('/getAllUsersWithQuery')
+    async getUsersWithQuery(@Query() getQueryDto: GetQueryDto, @Res() res: any) {
+        const users: any = await this.userService.getUsersWithQuery(getQueryDto);
 
         return res.status(HttpStatus.OK).send(users);
     }
 
     @ApiOperation({ summary: 'Get all users' })
     @ApiResponse({ status: 200, type: [User] })
-    @UseGuards(JwtAuthGuard)
+    // @Role('ADMIN')
+    // @UseGuards(RoleGuard)
     @Get('/getAllUsers')
     async getAllUsers(@Res() res: any) {
         const users: any = await this.userService.getAllUsers();

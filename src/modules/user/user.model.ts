@@ -1,9 +1,8 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
+import { Prop } from '@nestjs/mongoose';
+import { Document, Types, Schema, SchemaTypes } from 'mongoose';
 import { ApiProperty } from "@nestjs/swagger";
 import {Role} from "../roles/roles.model";
 
-@Schema()
 export class User extends Document {
     @ApiProperty({ example: 'Nick', description: 'Name' })
     @Prop({ required: true, unique: true })
@@ -26,12 +25,36 @@ export class User extends Document {
     role: Types.ObjectId;
 }
 
-export const UserSchema = SchemaFactory.createForClass(User);
 
-// UserSchema.post('save', async function() {
-//     await this.populate({ path: 'roles' });
-// })
-//
-// UserSchema.pre('find', async function() {
-//     await this.populate({ path: 'roles' });
-// })
+export const UserSchema: Schema = new Schema(
+  {
+      name: {
+          type: String,
+      },
+      email: {
+          type: String,
+          required: true,
+      },
+      password: {
+          type: String,
+          required: true,
+      },
+      role: {
+          type: SchemaTypes.ObjectId,
+          ref: 'Role',
+      },
+  },
+  { toJSON: { virtuals: true }, toObject: { virtuals: true } }
+)
+
+UserSchema.pre('findOne', function() {
+  this.populate('role');
+});
+
+UserSchema.pre('findById', function() {
+  this.populate('role');
+});
+
+UserSchema.pre('find', function() {
+  this.populate('role');
+});

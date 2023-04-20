@@ -27,10 +27,8 @@ export class UserService {
         return await this.userRepository.getUserById(id);
     }
 
-    async getUsers(getQueryDto: GetQueryDto): Promise<User[]> {
-        const res = await this.userRepository.getUsers(getQueryDto);
-
-        return res
+    async getUsersWithQuery(getQueryDto: GetQueryDto): Promise<User[]> {
+        return await this.userRepository.getUsers(getQueryDto);
     }
 
     async getAllUsers(): Promise<User[]> {
