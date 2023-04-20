@@ -1,4 +1,15 @@
-import { BadRequestException, Body, Controller, Get, HttpStatus, Param, Post, Query, Res } from '@nestjs/common';
+import {
+    BadRequestException,
+    Body,
+    Controller,
+    Get,
+    HttpStatus,
+    Param,
+    Post,
+    Query,
+    Res,
+    UseGuards
+} from '@nestjs/common';
 import { InjectConnection } from '@nestjs/mongoose';
 import { Response } from 'express';
 import { Connection, Schema as MongooseSchema } from 'mongoose';
@@ -7,6 +18,7 @@ import { UserService } from './user.service';
 import { GetQueryDto } from "../../dto/getQueryDto";
 import { User } from "./user.model";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import {JwtAuthGuard} from "../auth/jwt-auth.guard";
 
 @ApiTags('Users')
 @Controller('user')
@@ -52,6 +64,7 @@ export class UserController {
 
     @ApiOperation({ summary: 'Get all users' })
     @ApiResponse({ status: 200, type: [User] })
+    @UseGuards(JwtAuthGuard)
     @Get('/getAllUsers')
     async getAllUsers(@Res() res: any) {
         const users: any = await this.userService.getAllUsers();
