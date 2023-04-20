@@ -50,6 +50,6 @@ export class AuthService {
       return user;
     }
 
-    throw new UnauthorizedException({ message: "Wrong email pr password" })
+    throw new UnauthorizedException({ message: "Wrong email or password" })
   }
 }

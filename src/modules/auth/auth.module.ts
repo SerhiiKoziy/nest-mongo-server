@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import {forwardRef, Module} from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { UserModule } from "../user/user.module";
@@ -8,13 +8,14 @@ import {JwtModule} from "@nestjs/jwt";
   controllers: [AuthController],
   providers: [AuthService],
   imports: [
-    UserModule,
+    forwardRef(() => UserModule),
     JwtModule.register({
       secret: process.env.PRIVATE_KEY || 'SECRET',
       signOptions: {
         expiresIn: '24h'
       }
     })
-  ]
+  ],
+  exports: [AuthService, JwtModule]
 })
 export class AuthModule {}
