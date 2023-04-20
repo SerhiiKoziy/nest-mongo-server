@@ -49,4 +49,13 @@ export class UserController {
 
         return res.status(HttpStatus.OK).send(users);
     }
+
+    @ApiOperation({ summary: 'Get all users' })
+    @ApiResponse({ status: 200, type: [User] })
+    @Get('/getAllUsers')
+    async getAllUsers(@Res() res: any) {
+        const users: any = await this.userService.getAllUsers();
+
+        return res.status(HttpStatus.OK).send(users);
+    }
 }

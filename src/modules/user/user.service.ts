@@ -11,11 +11,14 @@ export class UserService {
     constructor(private readonly userRepository: UserRepository, private rolesService: RolesService) {}
 
     async createUser(createUserDto: CreateUserDto, session: ClientSession) {
-        const createdUser = await this.userRepository.createUser(createUserDto, session);
         const role = await this.rolesService.getRoleByValue("USER");
-        console.log('role', role)
-        await createdUser.$set('roles', [role.id])
-        console.log('createdUser', createdUser)
+        let user = { ...createUserDto, role: role._id };
+
+        const createdUser = await this.userRepository.createUser(user, session);
+
+        if (role) {
+            await createdUser.set('role', role._id)
+        }
 
         return createdUser;
     }
@@ -25,6 +28,16 @@ export class UserService {
     }
 
     async getUsers(getQueryDto: GetQueryDto): Promise<User[]> {
-        return await this.userRepository.getUsers(getQueryDto);
+        const res = await this.userRepository.getUsers(getQueryDto);
+
+        return res
+    }
+
+    async getAllUsers(): Promise<User[]> {
+        return await this.userRepository.getAllUsers();
+    }
+
+    async getUserByEmail(email: string): Promise<User> {
+        return await this.userRepository.getUserByEmail(email);
     }
 }

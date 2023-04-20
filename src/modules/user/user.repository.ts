@@ -15,12 +15,14 @@ export class UserRepository {
             throw new ConflictException('User already exists');
         }
 
-        user = new this.userModel({
-            name: createUserDto.name,
-            email: createUserDto.email,
-        });
-
         try {
+            user = await this.userModel.create({
+                name: createUserDto.name,
+                email: createUserDto.email,
+                password: createUserDto.password,
+                role: createUserDto.role
+            });
+
             user = await user.save({ session });
         } catch (error) {
             throw new InternalServerErrorException(error);
@@ -51,7 +53,7 @@ export class UserRepository {
     async getUserByEmail(email: string) {
         let user;
         try {
-            user = await this.userModel.findOne({ email }, 'name email img role').exec();
+            user = await this.userModel.findOne({ email }, 'name email password role').exec();
         } catch (error) {
             throw new InternalServerErrorException(error);
         }
@@ -108,5 +110,20 @@ export class UserRepository {
         } catch (error) {
             throw new InternalServerErrorException(error);
         }
+    }
+
+    async getAllUsers() {
+        let users;
+        try {
+            users = await this.userModel.find({ include: { all: true} });
+        } catch (error) {
+            throw new InternalServerErrorException(error);
+        }
+
+        if (!users) {
+            throw new NotFoundException('Users not found');
+        }
+
+        return users;
     }
 }

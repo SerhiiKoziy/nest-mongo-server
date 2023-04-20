@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { ApiProperty } from "@nestjs/swagger";
+import {Role} from "../roles/roles.model";
 
 @Schema()
 export class User extends Document {
@@ -16,7 +17,21 @@ export class User extends Document {
     @Prop({ default: Date.now })
     createdAt: Date;
 
-    roles: [{ type: Types.ObjectId, ref: 'Role' }];
+    @ApiProperty({ example: 'password', description: 'Password' })
+    @Prop({ default: 'password' })
+    password: string;
+
+    @ApiProperty({ example: 'USER', description: 'USER' })
+    @Prop({ default: 'USER' })
+    role: Types.ObjectId;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
+
+// UserSchema.post('save', async function() {
+//     await this.populate({ path: 'roles' });
+// })
+//
+// UserSchema.pre('find', async function() {
+//     await this.populate({ path: 'roles' });
+// })
