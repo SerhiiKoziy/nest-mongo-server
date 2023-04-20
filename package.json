@@ -22,10 +22,12 @@
     },
     "dependencies": {
         "@nestjs/core": "^8.2.3",
+        "@nestjs/jwt": "^10.0.3",
         "@nestjs/mapped-types": "^1.0.0",
         "@nestjs/mongoose": "^9.0.1",
         "@nestjs/platform-express": "^8.2.3",
         "@nestjs/swagger": "^6.3.0",
+        "bcryptjs": "^2.4.3",
         "class-validator": "^0.13.2",
         "dotenv": "^10.0.0",
         "mongoose": "^6.0.14",
