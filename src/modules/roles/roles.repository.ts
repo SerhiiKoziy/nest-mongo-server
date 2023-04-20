@@ -8,11 +8,11 @@ export class RoleRepository {
     constructor(@InjectModel(Role.name) private readonly roleModel: Model<Role>) {}
 
     async createRole(createRoleDto: CreateRoleDto, session: ClientSession) {
-        // let user = await this.getUserByEmail(createUserDto.email);
-        //
-        // if (user) {
-        //     throw new ConflictException('User already exists');
-        // }
+        let roleProposal = await this.getRoleByValue(createRoleDto.value);
+
+        if (roleProposal) {
+            throw new ConflictException('Role already exists');
+        }
 
         let role = new this.roleModel({
             value: createRoleDto.value,
