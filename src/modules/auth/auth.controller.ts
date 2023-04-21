@@ -17,8 +17,7 @@ export class AuthController {
   @Post('/login')
   async login(@Body() loginDto: LoginDto, @Res() res: Response) {
     try {
-      const user = { ...loginDto, name: '' };
-      const loginToken: any = await this.authService.login(user as CreateUserDto);
+      const loginToken: any = await this.authService.login(loginDto);
 
       return await res.status(HttpStatus.ACCEPTED).send(loginToken);
     } catch (error) {
