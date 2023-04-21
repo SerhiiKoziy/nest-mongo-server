@@ -8,7 +8,7 @@ import {
     Post,
     Query,
     Res,
-    UseGuards
+    UseGuards, UsePipes
 } from '@nestjs/common';
 import { InjectConnection } from '@nestjs/mongoose';
 import { Response } from 'express';
