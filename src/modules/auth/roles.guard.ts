@@ -23,7 +23,7 @@ export class RoleGuard implements CanActivate {
         context.getClass(),
       ]);
 
-      if(!requiredRole) {
+      if (!requiredRole) {
         return true;
       }
       const req = context.switchToHttp().getRequest();
@@ -38,8 +38,7 @@ export class RoleGuard implements CanActivate {
       const user = this.jwtService.verify(token);
       req.user = user;
 
-      console.log('111requiredRole', user.role, requiredRole)
-      return user.role === requiredRole;
+      return user.role.value === requiredRole;
     } catch (e) {
       throw new HttpException("Haven't access", HttpStatus.FORBIDDEN );
     }

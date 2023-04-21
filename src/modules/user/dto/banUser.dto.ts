@@ -1,4 +1,4 @@
-export class AddRoleDto {
-    readonly value: string;
+export class BanUserDto {
     readonly userId: string;
+    readonly banReason: string;
 }

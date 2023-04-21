@@ -35,13 +35,9 @@ export class RoleRepository {
     async getRoleByValue(value: string) {
         let role;
         try {
-            role = await this.roleModel.findOne({ where: { value }});
+            role = await this.roleModel.findOne({ value: value });
         } catch (error) {
             throw new InternalServerErrorException(error);
-        }
-
-        if (!role) {
-            throw new NotFoundException('Role not found');
         }
 
         return role;
