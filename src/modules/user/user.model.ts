@@ -23,6 +23,14 @@ export class User extends Document {
     @ApiProperty({ example: 'USER', description: 'USER' })
     @Prop({ default: 'USER' })
     role: Types.ObjectId;
+
+    @ApiProperty({ example: 'false', description: 'banned' })
+    @Prop({ default: false })
+    banned: boolean;
+
+    @ApiProperty({ example: 'Uncontrolled', description: 'banReason' })
+    @Prop({ default: '' })
+    banReason: string;
 }
 
 
@@ -38,6 +46,12 @@ export const UserSchema: Schema = new Schema(
       password: {
           type: String,
           required: true,
+      },
+      banned: {
+          type: Boolean,
+      },
+      banReason: {
+          type: String,
       },
       role: {
           type: SchemaTypes.ObjectId,

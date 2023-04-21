@@ -1,10 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import {HttpException, HttpStatus, Injectable} from '@nestjs/common';
 import { ClientSession, Schema as MongooseSchema } from 'mongoose';
 import { UserRepository } from './user.repository';
 import { CreateUserDto } from './dto/createUser.dto';
 import { User } from "./user.model";
 import { GetQueryDto } from "../../dto/getQueryDto";
 import {RolesService} from "../roles/roles.service";
+import {AddRoleDto} from "./dto/addRole.dto";
+import {BanUserDto} from "./dto/banUser.dto";
 
 @Injectable()
 export class UserService {
@@ -37,5 +39,33 @@ export class UserService {
 
     async getUserByEmail(email: string): Promise<User> {
         return await this.userRepository.getUserByEmail(email);
+    }
+
+    async addRole(dto: AddRoleDto): Promise<User> {
+        const user = await this.userRepository.getUserPrimaryKey(dto.userId);
+        const role = await this.rolesService.getRoleByValue(dto.value);
+
+        if(role && user) {
+            user.role = role.id;
+            await user.save()
+
+            return user;
+        }
+
+        throw new HttpException('User or password not found', HttpStatus.BAD_REQUEST);
+    }
+
+    async banUser(dto: BanUserDto) {
+        const user = await this.userRepository.getUserPrimaryKey(dto.userId);
+
+        if(user) {
+            user.banned = true;
+            user.banReason = dto.banReason;
+            await user.save()
+
+            return user;
+        }
+
+        throw new HttpException('User found', HttpStatus.BAD_REQUEST);
     }
 }

@@ -4,6 +4,7 @@ import { ClientSession, Model, Schema as MongooseSchema } from 'mongoose';
 import { User } from './user.model';
 import { CreateUserDto } from './dto/createUser.dto';
 import { GetQueryDto } from "../../dto/getQueryDto";
+import {UpdateUserDto} from "./dto/updateUser.dto";
 
 export class UserRepository {
     constructor(@InjectModel(User.name) private readonly userModel: Model<User>) {}
@@ -50,6 +51,21 @@ export class UserRepository {
         return user;
     }
 
+    async getUserPrimaryKey(id: string): Promise<User> {
+        let user;
+        try {
+            user = await this.userModel.findById({ _id: id });
+        } catch (error) {
+            throw new InternalServerErrorException(error);
+        }
+
+        if (!user) {
+            throw new NotFoundException('User not found');
+        }
+
+        return user;
+    }
+
     async getUserByEmail(email: string) {
         let user;
         try {
@@ -74,16 +90,14 @@ export class UserRepository {
             if (limit === 0) {
                 users = await this.userModel
                   .find()
-                  // .populate('client')
-                  // .populate('user', 'name email')
+                  .populate('role')
                   .skip(from)
                   .sort({ createdAt: -1 })
                   .exec();
             } else {
                 users = await this.userModel
                   .find()
-                  // .populate('client')
-                  // .populate('user', 'name email')
+                  .populate('role')
                   .skip(from)
                   .limit(limit)
                   .sort({ createdAt: -1 })
