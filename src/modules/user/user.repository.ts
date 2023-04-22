@@ -4,7 +4,6 @@ import { ClientSession, Model, Schema as MongooseSchema } from 'mongoose';
 import { User } from './user.model';
 import { CreateUserDto } from './dto/createUser.dto';
 import { GetQueryDto } from "../../dto/getQueryDto";
-import {UpdateUserDto} from "./dto/updateUser.dto";
 
 export class UserRepository {
     constructor(@InjectModel(User.name) private readonly userModel: Model<User>) {}
