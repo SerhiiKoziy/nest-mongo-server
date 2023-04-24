@@ -12,6 +12,9 @@ import { UserModule } from './modules/user/user.module';
 import { RolesModule } from './modules/roles/roles.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { PostsModule } from './modules/posts/posts.module';
+import { FilesModule } from './modules/files/files.module';
+import { ServeStaticModule } from "@nestjs/serve-static";
+import * as path from 'path';
 
 @Module({
     imports: [
@@ -21,6 +24,9 @@ import { PostsModule } from './modules/posts/posts.module';
             inject: [ConfigService],
             useFactory: async (configService: ConfigService) => configService.getMongoConfig(),
         }),
+        ServeStaticModule.forRoot({
+            rootPath: path.resolve(__dirname, 'static'),
+        }),
         ClientModule,
         ProductModule,
         SaleModule,
@@ -28,6 +34,7 @@ import { PostsModule } from './modules/posts/posts.module';
         RolesModule,
         AuthModule,
         PostsModule,
+        FilesModule,
     ],
     controllers: [AppController],
     providers: [AppService],

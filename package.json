@@ -26,6 +26,7 @@
         "@nestjs/mapped-types": "^1.0.0",
         "@nestjs/mongoose": "^9.0.1",
         "@nestjs/platform-express": "^8.2.3",
+        "@nestjs/serve-static": "^3.0.1",
         "@nestjs/swagger": "^6.3.0",
         "bcryptjs": "^2.4.3",
         "class-transformer": "^0.5.1",
@@ -36,7 +37,8 @@
         "reflect-metadata": "^0.1.13",
         "rimraf": "^3.0.2",
         "rxjs": "^7.4.0",
-        "swagger-ui-express": "^4.6.2"
+        "swagger-ui-express": "^4.6.2",
+        "uuid": "^9.0.0"
     },
     "devDependencies": {
         "@nestjs/common": "^8.2.3",
