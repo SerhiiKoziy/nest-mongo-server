@@ -1,5 +1,5 @@
 import { Prop } from '@nestjs/mongoose';
-import { Document, Types, Schema, SchemaTypes } from 'mongoose';
+import { Document, Schema, SchemaTypes } from 'mongoose';
 import { ApiProperty } from "@nestjs/swagger";
 
 export class Post extends Document {
@@ -14,6 +14,10 @@ export class Post extends Document {
   @ApiProperty({ example: 'image', description: 'image' })
   @Prop({ required: true })
   image: string;
+
+  @ApiProperty({ example: 'userId', description: 'userId' })
+  @Prop({ required: true })
+  userId: string;
 }
 
 export const PostSchema: Schema = new Schema(
@@ -29,7 +33,11 @@ export const PostSchema: Schema = new Schema(
       type: String,
       required: true,
     },
-    author: {
+    userId: {
+      type: String,
+      required: true,
+    },
+    user: {
       type: SchemaTypes.ObjectId,
       ref: 'User',
     },
