@@ -41,6 +41,10 @@ export class UserService {
         return await this.userRepository.getUserByEmail(email);
     }
 
+    async getUserPrimaryKey(userId): Promise<User> {
+        return await this.userRepository.getUserPrimaryKey(userId);
+    }
+
     async addRole(dto: AddRoleDto): Promise<User> {
         const user = await this.userRepository.getUserPrimaryKey(dto.userId);
         const role = await this.rolesService.getRoleByValue(dto.value);

@@ -1,12 +1,12 @@
-import {BadRequestException, Body, Controller, Get, HttpStatus, Param, Post, Res} from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpStatus, Param, Post, Res } from '@nestjs/common';
 import { InjectConnection } from "@nestjs/mongoose";
-import {Connection, Schema as MongooseSchema} from "mongoose";
+import { Connection } from "mongoose";
 import { RolesService } from "./roles.service";
 import { ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { Role } from "./roles.model";
 import { Response } from "express";
-import { CreateRoleDto } from "./dto/createRole.dto";
 import { User } from "../user/user.model";
+import { CreateRoleDto } from "./dto/createRole.dto";
 
 @Controller('roles')
 export class RolesController {

@@ -18,11 +18,11 @@ import { UserService } from './user.service';
 import { GetQueryDto } from "../../dto/getQueryDto";
 import { User } from "./user.model";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
-import {JwtAuthGuard} from "../auth/jwt-auth.guard";
-import {RoleGuard} from "../auth/roles.guard";
-import {Role} from "../auth/roles-auth.decorator";
-import {AddRoleDto} from "./dto/addRole.dto";
-import {BanUserDto} from "./dto/banUser.dto";
+import { JwtAuthGuard } from "../auth/jwt-auth.guard";
+import { RoleGuard } from "../auth/roles.guard";
+import { Role } from "../auth/roles-auth.decorator";
+import { AddRoleDto } from "./dto/addRole.dto";
+import { BanUserDto } from "./dto/banUser.dto";
 
 @ApiTags('Users')
 @Controller('user')
@@ -49,6 +49,7 @@ export class UserController {
 
     @ApiOperation({ summary: 'Get user by id' })
     @ApiResponse({ status: 200, type: User })
+    @UseGuards(JwtAuthGuard)
     @Get('/getUserById/:id')
     async getUserById(@Param('id') id: MongooseSchema.Types.ObjectId, @Res() res: Response) {
         const user: any = await this.userService.getUserById(id);
@@ -59,6 +60,7 @@ export class UserController {
 
     @ApiOperation({ summary: 'Get all users' })
     @ApiResponse({ status: 200, type: [User] })
+    @UseGuards(JwtAuthGuard)
     @Get('/getAllUsersWithQuery')
     async getUsersWithQuery(@Query() getQueryDto: GetQueryDto, @Res() res: any) {
         const users: any = await this.userService.getUsersWithQuery(getQueryDto);
