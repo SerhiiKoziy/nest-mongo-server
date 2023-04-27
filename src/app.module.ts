@@ -25,7 +25,7 @@ import * as path from 'path';
             useFactory: async (configService: ConfigService) => configService.getMongoConfig(),
         }),
         ServeStaticModule.forRoot({
-            rootPath: path.resolve(__dirname, 'static'),
+            rootPath: path.resolve(__dirname, 'uploads'),
         }),
         ClientModule,
         ProductModule,
