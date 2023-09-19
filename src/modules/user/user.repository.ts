@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { ClientSession, Model, Schema as MongooseSchema } from 'mongoose';
 import { User } from './user.model';
 import { CreateUserDto } from './dto/createUser.dto';
-import { GetQueryDto } from "../../dto/getQueryDto";
+import { GetQueryDto } from '../../dto/getQueryDto';
 
 export class UserRepository {
     constructor(@InjectModel(User.name) private readonly userModel: Model<User>) {}

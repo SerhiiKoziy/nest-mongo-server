@@ -1,56 +1,60 @@
-import { ConflictException, InternalServerErrorException } from '@nestjs/common';
+import { ConflictException, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { ClientSession, Model } from 'mongoose';
+import { ClientSession, Model, Schema as MongooseSchema } from 'mongoose';
 import { Detail } from './detail.model';
 import { CreateDetailDto } from './dto/createDetail.dto';
 
 export class DetailRepository {
   constructor(@InjectModel(Detail.name) private readonly detailModel: Model<Detail>) {}
 
-  // async createDetail(createDetailDto: CreateDetailDto, session: ClientSession) {
-  //   let detailProposal = await this.findDetailByName(createDetailDto.name);
-  //
-  //   if (detailProposal) {
-  //     throw new ConflictException('Detail already exists');
-  //   }
-  //
-  //   let detail = new this.detailModel({
-  //     name: createDetailDto.name,
-  //     detail: createDetailDto.detail,
-  //   });
-  //
-  //   try {
-  //     detail = await detail.save({ session });
-  //   } catch (error) {
-  //     throw new InternalServerErrorException(error);
-  //   }
-  //
-  //   if (!detail) {
-  //     throw new ConflictException('Detail not created');
-  //   }
-  //
-  //   return detail;
-  // }
+  async createDetail(createDetailDto: CreateDetailDto, session: ClientSession) {
+    let detail = await this.findDetailByName(createDetailDto.name);
 
-  createDetail(createDetailDto: CreateDetailDto) {
-    return this.detailModel.create(createDetailDto);
-  }
+    if (detail) {
+      throw new ConflictException('Detail already exists');
+    }
 
-  
-  async findDetailByName(name: string): Promise<Detail | null> {
     try {
-      const detail = await this.detailModel.findOne({ name }).exec();
-      return detail;
+      detail = await this.detailModel.create({
+        name: createDetailDto.name,
+        detail: createDetailDto.detail,
+      });
+
+      detail = await detail.save({ session });
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
+
+    if (!detail) {
+      throw new ConflictException('Detail not created');
+    }
+
+    return detail;
   }
 
-  async findOne(id: string): Promise<Detail> {
-    const detail = await this.detailModel.findById(id);
-    if (!detail) {
-      throw new InternalServerErrorException(`Detail with ID ${id} not found`);
+  async findDetailByName(name: string): Promise<Detail | null> {
+    let detail;
+    try {
+      detail = await this.detailModel.findOne({ name }).exec();
+    } catch (error) {
+      throw new InternalServerErrorException(error);
     }
+
+    return detail;
+  }
+
+  async getDetailById(id: MongooseSchema.Types.ObjectId): Promise<Detail> {
+    let detail;
+    try {
+      detail = await this.detailModel.findById({ _id: id });
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+
+    if (!detail) {
+      throw new NotFoundException('Detail not found');
+    }
+
     return detail;
   }
 }
