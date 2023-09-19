@@ -13,6 +13,9 @@ import { RolesModule } from './modules/roles/roles.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { PostsModule } from './modules/posts/posts.module';
 import { FilesModule } from './modules/files/files.module';
+import { DetailModule } from './modules/detail/detail.module';
+import { PdfModule } from './pdf/pdf.module';
+
 import { ServeStaticModule } from "@nestjs/serve-static";
 import * as path from 'path';
 
@@ -35,6 +38,8 @@ import * as path from 'path';
         AuthModule,
         PostsModule,
         FilesModule,
+        DetailModule,
+        PdfModule,
     ],
     controllers: [AppController],
     providers: [AppService],

@@ -4,12 +4,13 @@ import { DetailController } from './detail.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Detail, DetailSchema } from './detail.model';
 import { DetailRepository } from './detail.repository';
+import { PdfService } from '../../pdf/pdf.service';
 
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: Detail.name, schema: DetailSchema }])],
+  imports: [MongooseModule.forFeature([{ name: Detail.name, schema: DetailSchema }]), PdfService],
   controllers: [DetailController],
-  providers: [DetailService, DetailRepository],
+  providers: [PdfService, DetailService, DetailRepository],
   exports: [DetailService, DetailRepository],
 })
 export class DetailModule {}

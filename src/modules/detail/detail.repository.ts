@@ -7,32 +7,36 @@ import { CreateDetailDto } from './dto/createDetail.dto';
 export class DetailRepository {
   constructor(@InjectModel(Detail.name) private readonly detailModel: Model<Detail>) {}
 
-  async createDetail(createDetailDto: CreateDetailDto, session: ClientSession) {
-    let detailProposal = await this.findDetailByName(createDetailDto.name);
+  // async createDetail(createDetailDto: CreateDetailDto, session: ClientSession) {
+  //   let detailProposal = await this.findDetailByName(createDetailDto.name);
+  //
+  //   if (detailProposal) {
+  //     throw new ConflictException('Detail already exists');
+  //   }
+  //
+  //   let detail = new this.detailModel({
+  //     name: createDetailDto.name,
+  //     detail: createDetailDto.detail,
+  //   });
+  //
+  //   try {
+  //     detail = await detail.save({ session });
+  //   } catch (error) {
+  //     throw new InternalServerErrorException(error);
+  //   }
+  //
+  //   if (!detail) {
+  //     throw new ConflictException('Detail not created');
+  //   }
+  //
+  //   return detail;
+  // }
 
-    if (detailProposal) {
-      throw new ConflictException('Detail already exists');
-    }
-
-    let detail = new this.detailModel({
-      name: createDetailDto.name,
-      detail: createDetailDto.detail,
-    });
-
-    try {
-      detail = await detail.save({ session });
-    } catch (error) {
-      throw new InternalServerErrorException(error);
-    }
-
-    if (!detail) {
-      throw new ConflictException('Detail not created');
-    }
-
-    return detail;
+  createDetail(createDetailDto: CreateDetailDto) {
+    return this.detailModel.create(createDetailDto);
   }
 
-
+  
   async findDetailByName(name: string): Promise<Detail | null> {
     try {
       const detail = await this.detailModel.findOne({ name }).exec();

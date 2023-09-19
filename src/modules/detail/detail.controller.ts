@@ -14,20 +14,25 @@ export class DetailController {
 
   @ApiOperation({ summary: 'Create detail' })
   @ApiResponse({ status: 200, type: Detail })
+  // @Post('/createDetail')
+  // async create(@Body() createDetailDto: CreateDetailDto, @Res() res: Response) {
+  //   const session = await this.mongoConnection.startSession();
+  //   session.startTransaction();
+  //   try {
+  //     const newDetail = this.detailService.create(createDetailDto, session)
+  //     await session.commitTransaction();
+  //     return res.status(HttpStatus.CREATED).send(newDetail);
+  //   } catch (error) {
+  //     await session.abortTransaction();
+  //     throw new BadRequestException(error);
+  //   } finally {
+  //     await session.endSession();
+  //   }
+  // }
+
   @Post('/createDetail')
-  async create(@Body() createDetailDto: CreateDetailDto, @Res() res: Response) {
-    const session = await this.mongoConnection.startSession();
-    session.startTransaction();
-    try {
-      const newDetail = this.detailService.create(createDetailDto, session)
-      await session.commitTransaction();
-      return res.status(HttpStatus.CREATED).send(newDetail);
-    } catch (error) {
-      await session.abortTransaction();
-      throw new BadRequestException(error);
-    } finally {
-      await session.endSession();
-    }
+  create(@Body() createDetailDto: CreateDetailDto) {
+    return this.detailService.create(createDetailDto);
   }
 
   @Get()

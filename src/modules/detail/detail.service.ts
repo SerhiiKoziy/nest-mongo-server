@@ -3,14 +3,29 @@ import { CreateDetailDto } from './dto/createDetail.dto';
 import { UpdateDetailDto } from './dto/updateDetail.dto';
 import { DetailRepository } from './detail.repository';
 import { ClientSession } from 'mongoose';
-import {Detail} from './detail.model';
+import { Detail } from './detail.model';
+import { PdfService } from '../../pdf/pdf.service';
+import {InjectModel} from '@nestjs/mongoose';
 
 @Injectable()
 export class DetailService {
-  constructor(private readonly detailRepository: DetailRepository) {}
+  constructor(
+    private readonly detailRepository: DetailRepository,
+    private readonly pdfService: PdfService
+  ) {}
 
-  async create(createDetailDto: CreateDetailDto, session: ClientSession) {
-    const createDetail = await this.detailRepository.createDetail(createDetailDto, session);
+  // async create(createDetailDto: CreateDetailDto, session: ClientSession) {
+  //   const createDetail = await this.detailRepository.createDetail(createDetailDto, session);
+  //   await this.pdfService.generatePdf(createDetailDto);
+  //
+  //   return createDetail;
+  // }
+
+  async create(createDetailDto: CreateDetailDto) {
+    const createDetail = await this.detailRepository.createDetail(createDetailDto);
+    const dynamicFilename = `generated-${Date.now()}.pdf`;
+    await this.pdfService.generatePdf(createDetailDto, dynamicFilename);
+
     return createDetail;
   }
 
