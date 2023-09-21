@@ -6,7 +6,7 @@ import { UserRepository } from './user.repository';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { RolesModule } from '../roles/roles.module';
-import {AuthModule} from "../auth/auth.module";
+import { AuthModule } from "../auth/auth.module";
 
 @Module({
     imports: [

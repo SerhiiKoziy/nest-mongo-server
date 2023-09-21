@@ -1,10 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ClientSession, Schema as MongooseSchema } from 'mongoose';
+
 import { CreateDetailDto } from './dto/createDetail.dto';
 import { UpdateDetailDto } from './dto/updateDetail.dto';
 import { DetailRepository } from './detail.repository';
 import { Detail } from './detail.model';
-import { PdfService } from '../../pdf/pdf.service';
+import { PdfService } from '../pdf/pdf.service';
 
 @Injectable()
 export class DetailService {
@@ -15,6 +16,7 @@ export class DetailService {
 
   async create(createDetailDto: CreateDetailDto, session: ClientSession) {
     const createDetail = await this.detailRepository.createDetail(createDetailDto, session);
+
     const dynamicFilename = `generated-${Date.now()}.pdf`;
     await this.pdfService.generatePdf(createDetailDto, dynamicFilename);
 

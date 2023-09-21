@@ -1,4 +1,14 @@
+import {IsString} from 'class-validator';
+
 export class CreateDetailDto {
-  readonly name: string;
-  readonly detail: string;
+  @IsString()
+  userName: string;
+  @IsString()
+  price1: string;
+  @IsString()
+  price2: string;
+  @IsString()
+  detailID: string;
+  @IsString()
+  productName: string;
 }
