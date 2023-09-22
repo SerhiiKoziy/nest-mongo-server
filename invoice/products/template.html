@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>PDF Example Template</title>
+
+  <style>
+    .container {
+      max-width: 800px;
+      height: 100vh;
+      margin: auto;
+      padding: 30px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, .15);
+      font-family: 'Helvetica', sans-serif,
+      color: #555;
+    }
+
+    .container .wrapper-title {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .container div .title {
+      font-size: 14px;
+      line-height: 24px;
+    }
+
+    .container div .date-title {
+      font-size: 12px;
+      line-height: 24px;
+    }
+
+    .container .product-wrapper {
+      padding-top: 50px;
+    }
+
+    .container .product-wrapper div .total-price {
+      font-size: 14px;
+      line-height: 24px;
+    }
+
+    .container .list {
+      padding-top: 20px;
+    }
+
+    .container .list .item {
+      padding-top: 4px;
+    }
+  </style>
+</head>
+
+<body>
+<div class="container">
+  <div class="wrapper-title">
+    <img
+        src="https://i2.wp.com/cleverlogos.co/wp-content/uploads/2018/05/reciepthound_1.jpg?fit=800%2C600&ssl=1"
+        style="width:100%; max-width:156px;">
+    <h1 class="title">Hello, <%= userName %></h1>
+    <span class="date-title">Date: <%= today.getDate() %>.<%= today.getMonth() + 1 %>.<%= today.getFullYear() %></span>
+  </div>
+  <div class="product-wrapper">
+    <div>
+      <p>Product name: <%= productName %></p>
+      <p>Price: <%= price1 %></p>
+      <p>Price: <%= price2 %></p>
+      <h2 class="total-price">Total price: <%= parseInt(price1) + parseInt(price2) %></h2>
+    </div>
+    <ul class="list">
+      <% productDetails.forEach((item) => { %>
+      <li class="item"><%= item.name %> - <%= item.price %>$</li>
+      <% }) %>
+    </ul>
+  </div>
+</div>
+</body>
+
+</html>

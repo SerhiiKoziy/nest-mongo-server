@@ -13,4 +13,6 @@ import { PdfService } from '../pdf/pdf.service';
   providers: [PdfService, DetailService, DetailRepository],
   exports: [DetailService, DetailRepository]
 })
+
 export class DetailModule {}
+

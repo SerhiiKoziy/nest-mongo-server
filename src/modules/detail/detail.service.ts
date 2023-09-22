@@ -1,5 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Res } from '@nestjs/common';
 import { ClientSession, Schema as MongooseSchema } from 'mongoose';
+import { Response } from 'express';
+import { Readable } from 'stream';
 
 import { CreateDetailDto } from './dto/createDetail.dto';
 import { UpdateDetailDto } from './dto/updateDetail.dto';
@@ -11,28 +13,29 @@ import { PdfService } from '../pdf/pdf.service';
 export class DetailService {
   constructor(
     private readonly detailRepository: DetailRepository,
-    private  pdfService: PdfService
+    private pdfService: PdfService
   ) {}
 
-  async create(createDetailDto: CreateDetailDto, session: ClientSession) {
+  async create(createDetailDto: CreateDetailDto, session: ClientSession, @Res() res: Response) {
     const createDetail = await this.detailRepository.createDetail(createDetailDto, session);
 
-    const dynamicFilename = `generated-${Date.now()}.pdf`;
-    await this.pdfService.generatePdf(createDetailDto, dynamicFilename);
+    try {
+      const dynamicFilename = `generated-${Date.now()}.pdf`;
+      const pdfBuffer = await this.pdfService.generatePdf(createDetail, dynamicFilename);
 
-    return createDetail;
+      const pdfStream = Readable.from(pdfBuffer);
+
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename=${dynamicFilename}`);
+
+      pdfStream.pipe(res);
+    } catch (error) {
+      res.status(500).send('Error generating and sending PDF');
+    }
   }
 
   async getDetailById(id: MongooseSchema.Types.ObjectId): Promise<Detail> {
-    const detail = await this.detailRepository.getDetailById(id);
-    if (!detail) {
-      throw new NotFoundException(`Detail with ID ${id} not found`);
-    }
-    return detail;
-  }
-
-  getAll() {
-    return `This action returns all detail`;
+    return await this.detailRepository.getDetailById(id);
   }
 
   update(id: number, updateDetailDto: UpdateDetailDto) {

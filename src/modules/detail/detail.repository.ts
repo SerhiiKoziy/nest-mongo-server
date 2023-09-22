@@ -20,7 +20,8 @@ export class DetailRepository {
         productName: createDetailDto.productName,
         price1: createDetailDto.price1,
         price2: createDetailDto.price2,
-        detailID: createDetailDto.detailID
+        detailID: createDetailDto.detailID,
+        productDetails: createDetailDto.productDetails
       });
 
       detail = await detail.save({ session });
@@ -36,7 +37,8 @@ export class DetailRepository {
   }
 
   async findDetailByName(name: string): Promise<Detail | null> {
-    let detail;
+    let detail: Detail;
+
     try {
       detail = await this.detailModel.findOne({ productName: name }).exec();
     } catch (error) {
@@ -47,9 +49,10 @@ export class DetailRepository {
   }
 
   async getDetailById(id: MongooseSchema.Types.ObjectId): Promise<Detail> {
-    let detail;
+    let detail: Detail;
+
     try {
-      detail = await this.detailModel.findById({ _id: id });
+      detail = await this.detailModel.findById({ _id: id }).exec();
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

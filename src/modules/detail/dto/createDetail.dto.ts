@@ -1,4 +1,4 @@
-import {IsString} from 'class-validator';
+import { IsArray, IsString } from 'class-validator';
 
 export class CreateDetailDto {
   @IsString()
@@ -11,4 +11,6 @@ export class CreateDetailDto {
   detailID: string;
   @IsString()
   productName: string;
+  @IsArray()
+  productDetails: [];
 }

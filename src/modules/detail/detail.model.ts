@@ -23,6 +23,10 @@ export class Detail extends Document {
   @ApiProperty({ example: '1', description: 'Detail ID' })
   @Prop({ required: true, unique: true })
   detailID: string;
+
+  @ApiProperty({ example: 'name: Item, price: 100', description: 'Products' })
+  @Prop({ required: true, })
+  productDetails: [];
 }
 
 export const DetailSchema = SchemaFactory.createForClass(Detail);
