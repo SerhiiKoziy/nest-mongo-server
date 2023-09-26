@@ -1,79 +1,106 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>PDF Example Template</title>
-
   <style>
     .container {
       max-width: 800px;
-      height: 100vh;
       margin: auto;
       padding: 30px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, .15);
-      font-family: 'Helvetica', sans-serif,
+      font-family: Arial, sans-serif;
       color: #555;
     }
 
-    .container .wrapper-title {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+    .wrapper-title {
       text-align: center;
+      padding-bottom: 20px;
     }
 
-    .container div .title {
-      font-size: 14px;
-      line-height: 24px;
+    .title {
+      font-size: 24px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: #111111;
+      line-height: 121%;
     }
 
-    .container div .date-title {
+    .date-title {
       font-size: 12px;
-      line-height: 24px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: #111111;
+      line-height: 121%;
     }
 
-    .container .product-wrapper {
+    .product-wrapper {
       padding-top: 50px;
     }
 
-    .container .product-wrapper div .total-price {
+    .total-price {
       font-size: 14px;
       line-height: 24px;
     }
 
-    .container .list {
+    .list {
       padding-top: 20px;
     }
 
-    .container .list .item {
+    .item {
       padding-top: 4px;
     }
   </style>
 </head>
-
 <body>
-<div class="container">
-  <div class="wrapper-title">
-    <img
-        src="https://i2.wp.com/cleverlogos.co/wp-content/uploads/2018/05/reciepthound_1.jpg?fit=800%2C600&ssl=1"
-        style="width:100%; max-width:156px;">
-    <h1 class="title">Hello, <%= userName %></h1>
-    <span class="date-title">Date: <%= today.getDate() %>.<%= today.getMonth() + 1 %>.<%= today.getFullYear() %></span>
-  </div>
-  <div class="product-wrapper">
-    <div>
-      <p>Product name: <%= productName %></p>
-      <p>Price: <%= price1 %></p>
-      <p>Price: <%= price2 %></p>
-      <h2 class="total-price">Total price: <%= parseInt(price1) + parseInt(price2) %></h2>
-    </div>
-    <ul class="list">
-      <% productDetails.forEach((item) => { %>
-      <li class="item"><%= item.name %> - <%= item.price %>$</li>
-      <% }) %>
-    </ul>
-  </div>
-</div>
+<table
+    class="container"
+    border="0"
+    cellpadding="0"
+    cellspacing="0"
+    role="presentation"
+    style="background: #fffffe; background-color: #fffffe; width: 100%"
+>
+  <tr>
+    <td
+        class="wrapper-title"
+        align="center"
+        style="
+          font-size: 0px;
+          padding: 0px;
+          word-break: break-word;
+        ">
+      <img
+          src="https://i2.wp.com/cleverlogos.co/wp-content/uploads/2018/05/reciepthound_1.jpg?fit=800%2C600&ssl=1"
+          style="width: 100%; max-width: 156px;"
+      >
+      <h1 class="title">Hello, <%= userName %></h1>
+      <span
+          class="date-title">Date: <%= today.getDate() %>.<%= today.getMonth() + 1 %>.<%= today.getFullYear() %></span>
+    </td>
+  </tr>
+  <tr>
+    <td class="product-wrapper">
+      <div
+        style="
+        text-align: left;
+        direction: ltr;
+        display: inline-block;
+        vertical-align: middle;
+        width: 100%;
+      ">
+        <p>Product name: <%= productName %></p>
+        <p>Price: <%= price1 %></p>
+        <p>Price: <%= price2 %></p>
+        <h2 class="total-price">Total price: <%= parseInt(price1) + parseInt(price2) %></h2>
+      </div>
+      <ul class="list">
+        <% productDetails.forEach((item) => { %>
+        <li class="item"><%= item.name %> - <%= item.price %>$</li>
+        <% }) %>
+      </ul>
+    </td>
+  </tr>
+</table>
 </body>
-
 </html>
