@@ -8,7 +8,7 @@ import {
   Delete,
   Res,
   HttpStatus,
-  BadRequestException
+  BadRequestException, HttpCode
 } from '@nestjs/common';
 import { Connection, Schema as MongooseSchema, Types } from 'mongoose';
 import { InjectConnection } from '@nestjs/mongoose';
@@ -25,6 +25,7 @@ import { Detail } from './detail.model';
 export class DetailController {
   constructor(@InjectConnection() private readonly mongoConnection: Connection, private detailService: DetailService) {}
 
+  @HttpCode(200)
   @ApiOperation({ summary: 'Create detail' })
   @ApiResponse({ status: 200, type: Detail })
   @Post('/createDetail')
@@ -34,7 +35,7 @@ export class DetailController {
     try {
       const newDetail = await this.detailService.create(createDetailDto, session, res)
       await session.commitTransaction();
-      return res.status(HttpStatus.CREATED).send(newDetail);
+      return res.status(HttpStatus.OK).send(newDetail);
     } catch (error) {
       await session.abortTransaction();
       throw new BadRequestException(error);
@@ -43,6 +44,7 @@ export class DetailController {
     }
   }
 
+  @HttpCode(200)
   @ApiOperation({ summary: 'Get detail by id' })
   @ApiResponse({ status: 200, type: Detail })
   @Get('/getDetailById/:id')

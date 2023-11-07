@@ -8,6 +8,7 @@ import { UpdateDetailDto } from './dto/updateDetail.dto';
 import { DetailRepository } from './detail.repository';
 import { Detail } from './detail.model';
 import { PdfService } from '../pdf/pdf.service';
+import * as fs from 'fs';
 
 @Injectable()
 export class DetailService {
@@ -21,14 +22,13 @@ export class DetailService {
 
     try {
       const dynamicFilename = `generated-${Date.now()}.pdf`;
-      const pdfBuffer = await this.pdfService.generatePdf(createDetail, dynamicFilename);
+      const { content} = await this.pdfService.generatePdf(createDetail, dynamicFilename);
 
-      const pdfStream = Readable.from(pdfBuffer);
-
+      const pdfStream = Readable.from(content);
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', `attachment; filename=${dynamicFilename}`);
 
-      pdfStream.pipe(res);
+      pdfStream.pipe(fs.createWriteStream(content));
     } catch (error) {
       res.status(500).send('Error generating and sending PDF');
     }
