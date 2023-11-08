@@ -6,11 +6,15 @@ import { DetailController } from './detail.controller';
 import { Detail, DetailSchema } from './detail.model';
 import { DetailRepository } from './detail.repository';
 import { PdfService } from '../pdf/pdf.service';
-import {User, UserSchema} from '../user/user.model';
-import {PdfModule} from '../pdf/pdf.module';
+import { RolesModule } from '../roles/roles.module';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: Detail.name, schema: DetailSchema }])],
+  imports: [
+    MongooseModule.forFeature([{ name: Detail.name, schema: DetailSchema }]),
+    RolesModule,
+    forwardRef(() => AuthModule)
+  ],
   controllers: [DetailController],
   providers: [PdfService, DetailService, DetailRepository],
   exports: [DetailService, DetailRepository]

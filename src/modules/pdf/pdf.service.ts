@@ -11,7 +11,7 @@ import ejs from 'ejs';
 import nodemailer from 'nodemailer';
 import * as process from 'process';
 import { Response } from 'express';
-import {PdfDto} from './dto/pdf.dto';
+import { PdfDto } from './dto/pdf.dto';
 
 const pdfsFolderPath = path.join(process.cwd(), 'pdfs');
 const htmlTemplatePath = './invoice/products/template.html';
@@ -22,7 +22,6 @@ export class PdfService {
   async generatePdf(data: any, filename: string): Promise<{ filename: string, content: Buffer }> {
 
     return new Promise((resolve, reject) => {
-
       const htmlContent = ejs.render(htmlTemplate, {
         userName: data.userName,
         today: new Date(),
@@ -52,7 +51,7 @@ export class PdfService {
 
   async acceptOffer(pdfDto: PdfDto, @Res() res: Response): Promise<void> {
     try {
-      const matchingFile = await this.findPdfFile(pdfDto);
+      const matchingFile = await this.findPdfFileByPdfId(pdfDto.pdfId);
 
       if (matchingFile) {
         const filePath = path.join(pdfsFolderPath, matchingFile);
@@ -96,12 +95,19 @@ export class PdfService {
     }
   }
 
-  async declineOffer(pdfDto: PdfDto, @Res() res: Response): Promise<void> {
+  async declineOffer(pdfId: string, @Res() res: Response): Promise<any> {
     try {
-      const matchingFile = await this.findPdfFile(pdfDto);
+      const matchingFile = await this.findPdfFileByPdfId(pdfId);
 
       if (matchingFile) {
-        res.status(200).json({ message: 'Offer declined and PDF deleted' });
+        const filePath = path.join(pdfsFolderPath, matchingFile);
+        fs.unlink(filePath, (unlinkErr) => {
+          if (unlinkErr) {
+            console.error('Error deleting file:', unlinkErr);
+          }
+        });
+
+        res.status(200).json( { message: 'Offer declined' });
       } else {
         throw new HttpException('Matching file not found or already declined.', HttpStatus.NOT_FOUND);
       }
@@ -110,7 +116,7 @@ export class PdfService {
     }
   }
 
-  private async findPdfFile(pdfDto: PdfDto): Promise<string | null> {
+  private async findPdfFileByPdfId(pdfId: string): Promise<string | null> {
     return new Promise<string | null>((resolve, reject) => {
       fs.readdir(pdfsFolderPath, async (err, files) => {
         if (err) {
@@ -118,7 +124,7 @@ export class PdfService {
           return;
         }
 
-        const matchingFile = this.getPfdByID(files, pdfDto.pdfId);
+        const matchingFile = this.getPfdByID(files, pdfId);
         resolve(matchingFile);
       });
     });

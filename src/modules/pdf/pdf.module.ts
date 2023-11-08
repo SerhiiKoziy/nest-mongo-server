@@ -1,10 +1,11 @@
-import { Module} from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { PdfService } from './pdf.service';
 import { PdfController } from './pdf.controller';
-import {AuthModule} from '../auth/auth.module';
+import { AuthModule } from '../auth/auth.module';
+import { RolesModule } from '../roles/roles.module';
 
 @Module({
-  imports: [AuthModule],
+  imports: [RolesModule, AuthModule],
   providers: [PdfService],
   controllers: [PdfController],
   exports: [PdfService],

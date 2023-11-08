@@ -9,6 +9,7 @@ import {
   HttpCode,
   HttpStatus,
   BadRequestException,
+  UseGuards,
 } from '@nestjs/common';
 import { Connection, Schema as MongooseSchema } from 'mongoose';
 import { InjectConnection } from '@nestjs/mongoose';
@@ -18,6 +19,7 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { DetailService } from './detail.service';
 import { CreateDetailDto } from './dto/createDetail.dto';
 import { Detail } from './detail.model';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @ApiTags('Details')
 @Controller('details')
@@ -25,6 +27,7 @@ export class DetailController {
   constructor(@InjectConnection() private readonly mongoConnection: Connection, private detailService: DetailService) {}
 
   @HttpCode(200)
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Create detail' })
   @ApiResponse({ status: 200, type: Detail })
   @Post('/createDetail')
@@ -44,6 +47,7 @@ export class DetailController {
   }
 
   @HttpCode(200)
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Get detail by id' })
   @ApiResponse({ status: 200, type: Detail })
   @Get('/getDetailById/:id')

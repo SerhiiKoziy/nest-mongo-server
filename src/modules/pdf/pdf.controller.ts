@@ -6,20 +6,21 @@ import {
   Body,
   HttpCode,
   UseGuards,
-  Res
+  Res, Get, Param, ParseIntPipe
 } from '@nestjs/common';
-import { PdfService } from './pdf.service';
-import { PdfDto } from './dto/pdf.dto';
-import { ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { Response } from 'express';
-import { Connection } from 'mongoose';
-import { InjectConnection } from '@nestjs/mongoose';
+import {PdfService} from './pdf.service';
+import {PdfDto} from './dto/pdf.dto';
+import {ApiTags} from '@nestjs/swagger';
+import {JwtAuthGuard} from '../auth/jwt-auth.guard';
+import {Response} from 'express';
+import {Connection} from 'mongoose';
+import {InjectConnection} from '@nestjs/mongoose';
+import {RoleGuard} from '../auth/roles.guard';
 
 @ApiTags('Pdfs')
 @Controller('pdf')
 export class PdfController {
-  constructor(@InjectConnection() private readonly mongoConnection: Connection, private pdfService: PdfService,) {
+  constructor(@InjectConnection() private readonly mongoConnection: Connection, private pdfService: PdfService) {
   }
 
   @HttpCode(200)
@@ -42,12 +43,12 @@ export class PdfController {
 
   @HttpCode(200)
   @UseGuards(JwtAuthGuard)
-  @Post('/declineOffer')
-  async declineOffer(@Body() pdfDto: PdfDto, @Res() res: Response) {
+  @Get('/declineOffer/:id')
+  async declineOffer(@Param('id') id: number, @Res() res: Response) {
     const session = await this.mongoConnection.startSession();
     session.startTransaction();
     try {
-      const result = await this.pdfService.declineOffer(pdfDto, res);
+      const result = await this.pdfService.declineOffer(id.toString(), res);
       await session.commitTransaction();
       return res.status(HttpStatus.OK).send(result);
     } catch (error) {
