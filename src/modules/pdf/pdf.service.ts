@@ -40,7 +40,6 @@ export class PdfService {
       const pdfFilePath = path.join(pdfsFolderPath, filename);
 
       pdf.create(htmlContent, pdfOptions).toFile(pdfFilePath, (err) => {
-
         if (err) {
           reject(err);
         } else {

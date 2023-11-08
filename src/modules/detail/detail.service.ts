@@ -8,7 +8,6 @@ import { UpdateDetailDto } from './dto/updateDetail.dto';
 import { DetailRepository } from './detail.repository';
 import { Detail } from './detail.model';
 import { PdfService } from '../pdf/pdf.service';
-import * as fs from 'fs';
 
 @Injectable()
 export class DetailService {
@@ -28,7 +27,7 @@ export class DetailService {
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', `attachment; filename=${dynamicFilename}`);
 
-      pdfStream.pipe(fs.createWriteStream(content));
+      pdfStream.pipe(res);
     } catch (error) {
       res.status(500).send('Error generating and sending PDF');
     }

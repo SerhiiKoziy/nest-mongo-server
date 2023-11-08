@@ -1,9 +1,12 @@
 import {
   Controller,
   HttpStatus,
+  BadRequestException,
   Post,
   Body,
-  HttpCode, UseGuards, Res, BadRequestException
+  HttpCode,
+  UseGuards,
+  Res
 } from '@nestjs/common';
 import { PdfService } from './pdf.service';
 import { PdfDto } from './dto/pdf.dto';
@@ -11,7 +14,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { Response } from 'express';
 import { Connection } from 'mongoose';
-import {InjectConnection} from '@nestjs/mongoose';
+import { InjectConnection } from '@nestjs/mongoose';
 
 @ApiTags('Pdfs')
 @Controller('pdf')
@@ -20,7 +23,7 @@ export class PdfController {
   }
 
   @HttpCode(200)
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Post('/acceptOffer')
   async acceptOffer(@Body() pdfDto: PdfDto, @Res() res: Response) {
     const session = await this.mongoConnection.startSession();
@@ -38,7 +41,7 @@ export class PdfController {
   }
 
   @HttpCode(200)
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Post('/declineOffer')
   async declineOffer(@Body() pdfDto: PdfDto, @Res() res: Response) {
     const session = await this.mongoConnection.startSession();

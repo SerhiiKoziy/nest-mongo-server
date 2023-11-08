@@ -3,21 +3,20 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   Res,
+  HttpCode,
   HttpStatus,
-  BadRequestException, HttpCode
+  BadRequestException,
 } from '@nestjs/common';
-import { Connection, Schema as MongooseSchema, Types } from 'mongoose';
+import { Connection, Schema as MongooseSchema } from 'mongoose';
 import { InjectConnection } from '@nestjs/mongoose';
 import { Response } from 'express';
-import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { DetailService } from './detail.service';
 import { CreateDetailDto } from './dto/createDetail.dto';
-import { UpdateDetailDto } from './dto/updateDetail.dto';
 import { Detail } from './detail.model';
 
 @ApiTags('Details')
@@ -64,11 +63,6 @@ export class DetailController {
     } finally {
       await session.endSession();
     }
-  }
-
-  @Patch('/detail/:id')
-  update(@Param('id') id: string, @Body() updateDetailDto: UpdateDetailDto) {
-    return this.detailService.update(+id, updateDetailDto);
   }
 
   @Delete('/detail/:id')
