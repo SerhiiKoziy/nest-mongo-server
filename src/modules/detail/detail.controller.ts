@@ -51,14 +51,13 @@ export class DetailController {
   @ApiOperation({ summary: 'Get detail by id' })
   @ApiResponse({ status: 200, type: Detail })
   @Get('/getDetailById/:id')
-  async getDetailById(@Param('id') id: string, @Res() res: Response) {
+  async getDetailById(@Param('id') id: number, @Res() res: Response) {
     const session = await this.mongoConnection.startSession();
     session.startTransaction();
 
     try {
-      const objId = new MongooseSchema.Types.ObjectId(id)
       await session.commitTransaction();
-      const detail = await this.detailService.getDetailById(objId);
+      const detail = await this.detailService.getDetailById(id.toString());
 
       return res.status(HttpStatus.OK).send(detail);
     } catch (error) {

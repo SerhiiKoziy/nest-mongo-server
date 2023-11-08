@@ -1,6 +1,10 @@
-import { ConflictException, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  InternalServerErrorException,
+  NotFoundException
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { ClientSession, Model, Schema as MongooseSchema } from 'mongoose';
+import { ClientSession, Model } from 'mongoose';
 import { Detail } from './detail.model';
 import { CreateDetailDto } from './dto/createDetail.dto';
 
@@ -48,9 +52,8 @@ export class DetailRepository {
     return detail;
   }
 
-  async getDetailById(id: MongooseSchema.Types.ObjectId): Promise<Detail> {
+  async getDetailById(id: string): Promise<Detail> {
     let detail: Detail;
-
     try {
       detail = await this.detailModel.findById({ _id: id }).exec();
     } catch (error) {

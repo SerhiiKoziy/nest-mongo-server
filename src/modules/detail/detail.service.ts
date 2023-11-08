@@ -1,5 +1,5 @@
 import { Injectable, Res } from '@nestjs/common';
-import { ClientSession, Schema as MongooseSchema } from 'mongoose';
+import { ClientSession } from 'mongoose';
 import { Response } from 'express';
 import { Readable } from 'stream';
 
@@ -33,7 +33,7 @@ export class DetailService {
     }
   }
 
-  async getDetailById(id: MongooseSchema.Types.ObjectId): Promise<Detail> {
+  async getDetailById(id: string): Promise<Detail> {
     return await this.detailRepository.getDetailById(id);
   }
 
