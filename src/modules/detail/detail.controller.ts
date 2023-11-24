@@ -11,7 +11,7 @@ import {
   BadRequestException,
   UseGuards,
 } from '@nestjs/common';
-import { Connection, Schema as MongooseSchema } from 'mongoose';
+import { Connection } from 'mongoose';
 import { InjectConnection } from '@nestjs/mongoose';
 import { Response } from 'express';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -34,6 +34,7 @@ export class DetailController {
   async create(@Body() createDetailDto: CreateDetailDto, @Res() res: Response) {
     const session = await this.mongoConnection.startSession();
     session.startTransaction();
+
     try {
       const newDetail = await this.detailService.create(createDetailDto, session, res)
       await session.commitTransaction();

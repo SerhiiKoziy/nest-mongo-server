@@ -23,13 +23,11 @@ export class PdfService {
 
     return new Promise((resolve, reject) => {
       const htmlContent = ejs.render(htmlTemplate, {
-        userName: data.userName,
+        name: data.name,
         today: new Date(),
-        productName: data.productName,
-        detailID: data.detailID,
-        price1: data.price1,
-        price2: data.price2,
-        productDetails: data.productDetails,
+        description: data.description,
+        recipientEmail: data.recipientEmail,
+        details: data.details
       });
 
       const pdfOptions: CreateOptions = {

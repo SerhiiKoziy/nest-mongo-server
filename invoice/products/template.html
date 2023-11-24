@@ -74,7 +74,7 @@
           src="https://i2.wp.com/cleverlogos.co/wp-content/uploads/2018/05/reciepthound_1.jpg?fit=800%2C600&ssl=1"
           style="width: 100%; max-width: 156px;"
       >
-      <h1 class="title">Hello, <%= userName %></h1>
+      <h1 class="title">Hello, <%= name %></h1>
       <span
           class="date-title">Date: <%= today.getDate() %>.<%= today.getMonth() + 1 %>.<%= today.getFullYear() %></span>
     </td>
@@ -89,14 +89,11 @@
         vertical-align: middle;
         width: 100%;
       ">
-        <p>Product name: <%= productName %></p>
-        <p>Price: <%= price1 %></p>
-        <p>Price: <%= price2 %></p>
-        <h2 class="total-price">Total price: <%= parseInt(price1) + parseInt(price2) %></h2>
+        <p>Description: <%= description %></p>
       </div>
       <ul class="list">
-        <% productDetails.forEach((item) => { %>
-        <li class="item"><%= item.name %> - <%= item.price %>$</li>
+        <% details.forEach((item) => { %>
+        <li class="item"><%= item.productName %> - <%= item.count %> - <%= item.price %>$</li>
         <% }) %>
       </ul>
     </td>

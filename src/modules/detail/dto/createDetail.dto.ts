@@ -1,16 +1,29 @@
-import { IsArray, IsString } from 'class-validator';
+import { IsArray, IsString, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
+
+export class AdditionalDetails {
+  @IsString()
+  productName: string;
+
+  @IsString()
+  count: string;
+
+  @IsString()
+  price: string;
+}
 
 export class CreateDetailDto {
   @IsString()
-  userName: string;
+  name: string;
+
   @IsString()
-  price1: string;
+  description: string;
+
   @IsString()
-  price2: string;
-  @IsString()
-  detailID: string;
-  @IsString()
-  productName: string;
+  recipientEmail: string;
+
   @IsArray()
-  productDetails: [];
+  @ValidateNested({ each: true })
+  @Type(() => AdditionalDetails)
+  details: AdditionalDetails[];
 }

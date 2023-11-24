@@ -6,27 +6,19 @@ import { ApiProperty } from '@nestjs/swagger';
 export class Detail extends Document {
   @ApiProperty({ example: 'Water', description: 'Product Name' })
   @Prop({ required: true })
-  productName: string;
+  name: string;
 
   @ApiProperty({ example: 'Serhii', description: 'User Name' })
   @Prop({ required: true })
-  userName: string;
+  description: string;
 
-  @ApiProperty({ example: '25', description: 'Price first' })
+  @ApiProperty({ example: 'serhii@gmail.com', description: 'Email' })
   @Prop({ required: true, })
-  price1: string;
+  recipientEmail: string;
 
-  @ApiProperty({ example: '59', description: 'Price second' })
+  @ApiProperty({ example: 'productName: Item, count: 1 price: 100', description: 'Products' })
   @Prop({ required: true, })
-  price2: string;
-
-  @ApiProperty({ example: '1', description: 'Detail ID' })
-  @Prop({ required: true, unique: true })
-  detailID: string;
-
-  @ApiProperty({ example: 'name: Item, price: 100', description: 'Products' })
-  @Prop({ required: true, })
-  productDetails: [];
+  details: [];
 }
 
 export const DetailSchema = SchemaFactory.createForClass(Detail);

@@ -12,7 +12,7 @@ export class DetailRepository {
   constructor(@InjectModel(Detail.name) private readonly detailModel: Model<Detail>) {}
 
   async createDetail(createDetailDto: CreateDetailDto, session: ClientSession) {
-    let detail = await this.findDetailByName(createDetailDto.productName);
+    let detail = await this.findDetailByName(createDetailDto.name);
 
     if (detail) {
       throw new ConflictException('Detail already exists');
@@ -20,12 +20,10 @@ export class DetailRepository {
 
     try {
       detail = await this.detailModel.create({
-        userName: createDetailDto.userName,
-        productName: createDetailDto.productName,
-        price1: createDetailDto.price1,
-        price2: createDetailDto.price2,
-        detailID: createDetailDto.detailID,
-        productDetails: createDetailDto.productDetails
+        name: createDetailDto.name,
+        description: createDetailDto.description,
+        recipientEmail: createDetailDto.recipientEmail,
+        details: createDetailDto.details
       });
 
       detail = await detail.save({ session });
@@ -44,7 +42,7 @@ export class DetailRepository {
     let detail: Detail;
 
     try {
-      detail = await this.detailModel.findOne({ productName: name }).exec();
+      detail = await this.detailModel.findOne({ name: name }).exec();
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
