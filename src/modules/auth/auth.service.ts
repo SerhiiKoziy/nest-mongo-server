@@ -1,10 +1,11 @@
-import {UnauthorizedException, HttpException, HttpStatus, Injectable, InternalServerErrorException} from '@nestjs/common';
+import { UnauthorizedException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { ClientSession } from 'mongoose';
 import { CreateUserDto } from "../user/dto/createUser.dto";
 import { UserService } from "../user/user.service";
 import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcryptjs";
-import {User} from "../user/user.model";
-import {LoginDto} from "./dto/login.dto";
+import { User } from "../user/user.model";
+import { LoginDto } from "./dto/login.dto";
 
 @Injectable()
 export class AuthService {
@@ -17,7 +18,7 @@ export class AuthService {
     return this.generateToken(user)
   }
 
-  async registration(userDto: CreateUserDto, session) {
+  async registration(userDto: CreateUserDto, session: ClientSession) {
     let candidate = await this.userService.getUserByEmail(userDto.email);
 
     if (candidate) {
