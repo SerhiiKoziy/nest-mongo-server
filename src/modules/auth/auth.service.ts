@@ -1,4 +1,9 @@
-import { UnauthorizedException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  UnauthorizedException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { ClientSession } from 'mongoose';
 import { CreateUserDto } from "../user/dto/createUser.dto";
 import { UserService } from "../user/user.service";
@@ -13,9 +18,13 @@ export class AuthService {
   }
 
   async login(loginDto: LoginDto) {
-    const user = await this.validateUser(loginDto)
+    try {
+      const user = await this.validateUser(loginDto);
+      return await this.generateToken(user);
 
-    return this.generateToken(user)
+    } catch (error) {
+      throw new HttpException('Wrong email or password', HttpStatus.BAD_REQUEST);
+    }
   }
 
   async registration(userDto: CreateUserDto, session: ClientSession) {
