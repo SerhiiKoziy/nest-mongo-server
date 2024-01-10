@@ -3,18 +3,17 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
-} from '@nestjs/common';
-import { ClientSession } from 'mongoose';
+} from "@nestjs/common";
+import { ClientSession } from "mongoose";
 import { CreateUserDto } from "../user/dto/createUser.dto";
 import { UserService } from "../user/user.service";
 import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcryptjs";
 import { User } from "../user/user.model";
 import { LoginDto } from "./dto/login.dto";
-import {ForgotPasswordDto} from './dto/forgotPassword.dto';
-import nodemailer from 'nodemailer';
-import process from 'process';
-import fs from 'fs';
+import { ForgotPasswordDto } from "./dto/forgotPassword.dto";
+import nodemailer from "nodemailer";
+import process from "process";
 
 @Injectable()
 export class AuthService {
@@ -53,12 +52,27 @@ export class AuthService {
 
       const verificationCode = await this.generateCode(6)
       user.password = verificationCode
-      const newToken = await this.userService.updateUser(user)
-
       await this.sendVerificationCodeEmail(dto.email, verificationCode);
-      return  await this.generateToken(newToken)
     } catch (error) {
       throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async resetPassword(email: string, newPassword: string) {
+    try {
+      const user = await this.userService.getUserByEmail(email);
+
+      if (!user) {
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      }
+
+      const hashedPassword = await bcrypt.hash(newPassword, 5);
+      user.password = hashedPassword;
+      await this.userService.updateUser(user);
+
+      return { message: 'Password reset successful' };
+    } catch (error) {
+      throw new HttpException('Failed to reset password', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 

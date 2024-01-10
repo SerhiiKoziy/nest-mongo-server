@@ -1,5 +1,5 @@
-import {HttpException, HttpStatus, Injectable} from '@nestjs/common';
-import {ClientSession, Model, Schema as MongooseSchema} from 'mongoose';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { ClientSession, Model, Schema as MongooseSchema } from 'mongoose';
 import { UserRepository } from './user.repository';
 import { CreateUserDto } from './dto/createUser.dto';
 import { User } from "./user.model";
@@ -7,12 +7,13 @@ import { GetQueryDto } from "../../dto/getQueryDto";
 import { RolesService } from "../roles/roles.service";
 import { AddRoleDto } from "./dto/addRole.dto";
 import { BanUserDto } from "./dto/banUser.dto";
+import {InjectModel} from '@nestjs/mongoose';
 
 @Injectable()
 export class UserService {
-    constructor(private readonly userRepository: UserRepository,
-                private rolesService: RolesService,
-                private readonly userModel: Model<User>) {}
+    constructor(@InjectModel(User.name) private userModel: Model<User>,
+                private readonly userRepository: UserRepository,
+                private rolesService: RolesService) {}
 
     async createUser(createUserDto: CreateUserDto, session: ClientSession) {
         const role = await this.rolesService.getRoleByValue("USER");

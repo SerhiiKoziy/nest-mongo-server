@@ -12,7 +12,7 @@ import { AuthModule } from '../auth/auth.module';
     imports: [
       MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
       RolesModule,
-      forwardRef(() => AuthModule)
+      forwardRef(() => AuthModule),
     ],
     controllers: [UserController],
     providers: [UserService, UserRepository],

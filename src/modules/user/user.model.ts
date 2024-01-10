@@ -1,7 +1,6 @@
 import { Prop } from '@nestjs/mongoose';
 import { Document, Types, Schema, SchemaTypes } from 'mongoose';
 import { ApiProperty } from "@nestjs/swagger";
-import {Role} from "../roles/roles.model";
 
 export class User extends Document {
     @ApiProperty({ example: 'Nick', description: 'Name' })
@@ -32,7 +31,6 @@ export class User extends Document {
     @Prop({ default: '' })
     banReason: string;
 }
-
 
 export const UserSchema: Schema = new Schema(
   {
