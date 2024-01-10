@@ -1,12 +1,12 @@
-import {Controller, Post, Body, HttpStatus, BadRequestException, Res} from '@nestjs/common';
-import { ApiTags } from "@nestjs/swagger";
+import { Controller, Post, Body, HttpStatus, BadRequestException, Res } from '@nestjs/common';
+import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { CreateUserDto } from "../user/dto/createUser.dto";
 import { AuthService } from "./auth.service";
-import {InjectConnection} from "@nestjs/mongoose";
-import {Connection} from "mongoose";
-import {Response} from "express";
-import {LoginDto} from "./dto/login.dto";
-
+import { InjectConnection } from "@nestjs/mongoose";
+import { Connection } from "mongoose";
+import { Response } from "express";
+import { LoginDto } from "./dto/login.dto";
+import { ForgotPasswordDto } from './dto/forgotPassword.dto';
 
 @ApiTags('Authorization')
 @Controller('auth')
@@ -40,5 +40,13 @@ export class AuthController {
     } finally {
       await session.endSession();
     }
+  }
+
+  @ApiOperation({ summary: 'Forgot password' })
+  @Post('/forgot-password')
+  async forgotPassword(@Body() dto: ForgotPasswordDto, @Res() res: Response) {
+    const email = await this.authService.forgotPassword(dto);
+
+    return res.status(HttpStatus.OK).send(email)
   }
 }

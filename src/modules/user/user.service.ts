@@ -1,16 +1,18 @@
 import {HttpException, HttpStatus, Injectable} from '@nestjs/common';
-import { ClientSession, Schema as MongooseSchema } from 'mongoose';
+import {ClientSession, Model, Schema as MongooseSchema} from 'mongoose';
 import { UserRepository } from './user.repository';
 import { CreateUserDto } from './dto/createUser.dto';
 import { User } from "./user.model";
 import { GetQueryDto } from "../../dto/getQueryDto";
-import {RolesService} from "../roles/roles.service";
-import {AddRoleDto} from "./dto/addRole.dto";
-import {BanUserDto} from "./dto/banUser.dto";
+import { RolesService } from "../roles/roles.service";
+import { AddRoleDto } from "./dto/addRole.dto";
+import { BanUserDto } from "./dto/banUser.dto";
 
 @Injectable()
 export class UserService {
-    constructor(private readonly userRepository: UserRepository, private rolesService: RolesService) {}
+    constructor(private readonly userRepository: UserRepository,
+                private rolesService: RolesService,
+                private readonly userModel: Model<User>) {}
 
     async createUser(createUserDto: CreateUserDto, session: ClientSession) {
         const role = await this.rolesService.getRoleByValue("USER");
@@ -40,6 +42,7 @@ export class UserService {
     async getUserByEmail(email: string): Promise<User> {
         return await this.userRepository.getUserByEmail(email);
     }
+
 
     async getUserPrimaryKey(userId): Promise<User> {
         return await this.userRepository.getUserPrimaryKey(userId);
@@ -71,5 +74,13 @@ export class UserService {
         }
 
         throw new HttpException('User found', HttpStatus.BAD_REQUEST);
+    }
+
+    async updateUser(user: User): Promise<User> {
+        try {
+            return await this.userModel.findByIdAndUpdate(user._id, user, { new: true });
+        } catch (error) {
+            throw new Error('Failed to update user in the database');
+        }
     }
 }
