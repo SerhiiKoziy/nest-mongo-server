@@ -11,4 +11,9 @@ export class ResetPasswordDto {
   @IsString()
   @IsNotEmpty()
   newPassword: string;
+
+  @ApiProperty({ example: 'FGD34D', description: 'Verification code' })
+  @IsString()
+  @IsNotEmpty()
+  verificationCode: string;
 }

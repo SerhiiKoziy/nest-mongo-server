@@ -11,14 +11,10 @@ import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcryptjs";
 import { User } from "../user/user.model";
 import { LoginDto } from "./dto/login.dto";
-import { ForgotPasswordDto } from "./dto/forgotPassword.dto";
-import nodemailer from "nodemailer";
-import process from "process";
 
 @Injectable()
 export class AuthService {
-  constructor(private userService: UserService, private jwtService: JwtService) {
-  }
+  constructor(private userService: UserService, private jwtService: JwtService) {}
 
   async login(loginDto: LoginDto) {
     try {
@@ -43,39 +39,6 @@ export class AuthService {
     return this.generateToken(user)
   }
 
-  async forgotPassword(dto: ForgotPasswordDto){
-    try {
-      const user = await this.userService.getUserByEmail(dto.email)
-      if (!user) {
-        throw new HttpException('Invalid email', HttpStatus.BAD_REQUEST);
-      }
-
-      const verificationCode = await this.generateCode(6)
-      user.password = verificationCode
-      await this.sendVerificationCodeEmail(dto.email, verificationCode);
-    } catch (error) {
-      throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
-
-  async resetPassword(email: string, newPassword: string) {
-    try {
-      const user = await this.userService.getUserByEmail(email);
-
-      if (!user) {
-        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-      }
-
-      const hashedPassword = await bcrypt.hash(newPassword, 5);
-      user.password = hashedPassword;
-      await this.userService.updateUser(user);
-
-      return { message: 'Password reset successful' };
-    } catch (error) {
-      throw new HttpException('Failed to reset password', HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
-
   private async generateToken(user: User) {
     const payload = {
       name: user.name,
@@ -98,41 +61,5 @@ export class AuthService {
     }
 
     throw new UnauthorizedException({ message: "Wrong email or password" })
-  }
-
-  private async generateCode(length: number) {
-    let result = '';
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUWXYZ0123456789';
-    const charactersLength = characters.length;
-    let counter = 0;
-    while (counter < length) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-      counter += 1;
-    }
-
-    return result;
-  }
-
-  private async sendVerificationCodeEmail(email: string, verificationCode: string) {
-    try {
-      const transporter = nodemailer.createTransport({
-        service: process.env.MAIL_HOST,
-        auth: {
-          user: process.env.SMTP_USERNAME,
-          pass: process.env.SMTP_PASSWORD,
-        },
-      });
-
-      const mailOptions = {
-        from: process.env.SMTP_USERNAME,
-        to: email,
-        subject: 'Password Reset Verification Code',
-        text: `Your verification code is: ${verificationCode}`,
-      };
-
-      await transporter.sendMail(mailOptions);
-    } catch (error) {
-      throw new HttpException('Failed to send verification code email', HttpStatus.INTERNAL_SERVER_ERROR);
-    }
   }
 }

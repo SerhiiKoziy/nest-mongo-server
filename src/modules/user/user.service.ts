@@ -44,7 +44,6 @@ export class UserService {
         return await this.userRepository.getUserByEmail(email);
     }
 
-
     async getUserPrimaryKey(userId): Promise<User> {
         return await this.userRepository.getUserPrimaryKey(userId);
     }
