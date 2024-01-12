@@ -23,12 +23,12 @@ export class ForgotPasswordService {
   ) {}
 
   async forgotPassword(dto: ForgotPasswordDto) {
-    const generateVerificationCode = await this.generateCode(6);
+    let generateVerificationCode = await this.generateCode(6);
 
     try {
       const existingCode = await this.passwordResetCodeModel.findOne({ email: dto.email });
       if (existingCode) {
-        await this.updateVerificationCode(dto.email);
+        await this.updateVerificationCode({ email: dto.email, code: generateVerificationCode });
       } else {
         await this.passwordResetCodeModel.create({
           email: dto.email,
@@ -98,11 +98,11 @@ export class ForgotPasswordService {
     }
   }
 
-  private async updateVerificationCode(email: string){
-    const newVerificationCode = await this.generateCode(6);
+  private async updateVerificationCode(dto: VerificationCodeDto){
+    const { email, code } = dto;
     await this.passwordResetCodeModel.findOneAndUpdate(
       { email },
-      {$set: { verificationCode: newVerificationCode, createdAt: new Date() }},
+      {$set: { verificationCode: code, createdAt: new Date() }},
     );
   }
 
