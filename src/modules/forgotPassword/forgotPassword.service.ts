@@ -18,7 +18,7 @@ import { VerificationCodeDto } from './dto/verificationCode.dto';
 @Injectable()
 export class ForgotPasswordService {
   constructor(
-    @InjectModel(ForgotPassword.name) private passwordResetCodeModel: Model<ForgotPassword>,
+    @InjectModel(ForgotPassword.name) private forgotPasswordModel: Model<ForgotPassword>,
     private userService: UserService,
   ) {}
 
@@ -31,11 +31,11 @@ export class ForgotPasswordService {
         throw new HttpException('User not found', HttpStatus.NOT_FOUND);
       }
 
-      const existingCode = await this.passwordResetCodeModel.findOne({ email: dto.email });
+      const existingCode = await this.forgotPasswordModel.findOne({ email: dto.email });
       if (existingCode) {
         await this.updateVerificationCode({ email: dto.email, code: generateVerificationCode });
       } else {
-        await this.passwordResetCodeModel.create({
+        await this.forgotPasswordModel.create({
           email: dto.email,
           verificationCode: generateVerificationCode,
         });
@@ -71,7 +71,7 @@ export class ForgotPasswordService {
       const hashedPassword = await bcrypt.hash(newPassword, 5);
       user.password = hashedPassword;
       await this.userService.updateUser(user);
-      await this.passwordResetCodeModel.deleteOne({ email });
+      await this.forgotPasswordModel.deleteOne({ email });
 
       return { message: 'Password reset successful' };
     } catch (error) {
@@ -87,7 +87,7 @@ export class ForgotPasswordService {
     const { email, code } = dto;
 
     try {
-      const latestCode = await this.passwordResetCodeModel
+      const latestCode = await this.forgotPasswordModel
         .findOne({ email })
         .sort({ createdAt: -1 })
         .exec();
@@ -104,6 +104,8 @@ export class ForgotPasswordService {
       const currentTime = new Date().getTime();
 
       if (currentTime > expirationTime) {
+        await this.forgotPasswordModel.deleteOne({ _id: latestCode._id });
+
         return { isValid: false, message: 'Verification code has expired' };
       }
 
@@ -115,7 +117,7 @@ export class ForgotPasswordService {
 
   private async updateVerificationCode(dto: VerificationCodeDto){
     const { email, code } = dto;
-    await this.passwordResetCodeModel.findOneAndUpdate(
+    await this.forgotPasswordModel.findOneAndUpdate(
       { email },
       {$set: { verificationCode: code, createdAt: new Date() }},
     );
