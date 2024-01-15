@@ -50,9 +50,9 @@ export class AuthController {
   @ApiOperation({ summary: 'Forgot password' })
   @Post('/forgot-password')
   async forgotPassword(@Body() dto: ForgotPasswordDto, @Res() res: Response) {
-    const email = await this.forgotPasswordService.forgotPassword(dto);
+    const result = await this.forgotPasswordService.forgotPassword(dto);
 
-    return res.status(HttpStatus.OK).send(email)
+    return res.status(HttpStatus.OK).send(result)
   }
 
   @ApiOperation({ summary: 'Reset password' })

@@ -12,8 +12,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { UserService } from '../user/user.service';
 import { ForgotPassword } from './forgotPassword.model';
 import { ForgotPasswordDto } from './dto/forgotPassword.dto';
-import {ResetPasswordDto} from './dto/resetPassword.dto';
-import {VerificationCodeDto} from './dto/verificationCode.dto';
+import { ResetPasswordDto } from './dto/resetPassword.dto';
+import { VerificationCodeDto } from './dto/verificationCode.dto';
 
 @Injectable()
 export class ForgotPasswordService {
@@ -23,9 +23,14 @@ export class ForgotPasswordService {
   ) {}
 
   async forgotPassword(dto: ForgotPasswordDto) {
-    let generateVerificationCode = await this.generateCode(6);
-
     try {
+      let generateVerificationCode = await this.generateCode(6);
+      const existingUser = await this.userService.getUserByEmail(dto.email);
+
+      if (!existingUser) {
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      }
+
       const existingCode = await this.passwordResetCodeModel.findOne({ email: dto.email });
       if (existingCode) {
         await this.updateVerificationCode({ email: dto.email, code: generateVerificationCode });
@@ -37,8 +42,14 @@ export class ForgotPasswordService {
       }
 
       await this.sendVerificationCodeEmail(dto.email, generateVerificationCode);
+
+      return { message: 'Verification code sent' };
     } catch (error) {
-      throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
+      if (error instanceof HttpException) {
+        throw error;
+      } else {
+        throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
     }
   }
 
@@ -64,7 +75,11 @@ export class ForgotPasswordService {
 
       return { message: 'Password reset successful' };
     } catch (error) {
-      throw new HttpException('Failed to reset password', HttpStatus.INTERNAL_SERVER_ERROR);
+      if (error instanceof HttpException) {
+        throw error;
+      } else {
+        throw new HttpException('Failed to reset password', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
     }
   }
 
