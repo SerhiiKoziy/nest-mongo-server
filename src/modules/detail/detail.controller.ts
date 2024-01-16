@@ -52,13 +52,13 @@ export class DetailController {
   @ApiOperation({ summary: 'Get detail by id' })
   @ApiResponse({ status: 200, type: Detail })
   @Get('/getDetailById/:id')
-  async getDetailById(@Param('id') id: number, @Res() res: Response) {
+  async getDetailById(@Param('id') id: string, @Res() res: Response) {
     const session = await this.mongoConnection.startSession();
     session.startTransaction();
 
     try {
       await session.commitTransaction();
-      const detail = await this.detailService.getDetailById(id.toString());
+      const detail = await this.detailService.getDetailById(id);
 
       return res.status(HttpStatus.OK).send(detail);
     } catch (error) {

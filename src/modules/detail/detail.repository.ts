@@ -1,18 +1,18 @@
 import {
   ConflictException,
   InternalServerErrorException,
-  NotFoundException
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { ClientSession, Model } from 'mongoose';
 import { Detail } from './detail.model';
 import { CreateDetailDto } from './dto/createDetail.dto';
 
+
 export class DetailRepository {
   constructor(@InjectModel(Detail.name) private readonly detailModel: Model<Detail>) {}
 
   async createDetail(createDetailDto: CreateDetailDto, session: ClientSession) {
-    let detail = await this.findDetailByName(createDetailDto.name);
+    let detail = await this.getDetailById(createDetailDto.detailId);
 
     if (detail) {
       throw new ConflictException('Detail already exists');
@@ -23,7 +23,8 @@ export class DetailRepository {
         name: createDetailDto.name,
         description: createDetailDto.description,
         recipientEmail: createDetailDto.recipientEmail,
-        details: createDetailDto.details
+        details: createDetailDto.details,
+        _id: createDetailDto.detailId
       });
 
       detail = await detail.save({ session });
@@ -38,28 +39,12 @@ export class DetailRepository {
     return detail;
   }
 
-  async findDetailByName(name: string): Promise<Detail | null> {
-    let detail: Detail;
-
-    try {
-      detail = await this.detailModel.findOne({ name: name }).exec();
-    } catch (error) {
-      throw new InternalServerErrorException(error);
-    }
-
-    return detail;
-  }
-
   async getDetailById(id: string): Promise<Detail> {
     let detail: Detail;
     try {
       detail = await this.detailModel.findById({ _id: id }).exec();
     } catch (error) {
       throw new InternalServerErrorException(error);
-    }
-
-    if (!detail) {
-      throw new NotFoundException('Detail not found');
     }
 
     return detail;
