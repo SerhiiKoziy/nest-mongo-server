@@ -36,5 +36,5 @@ export class CreateDetailDto {
 
   @IsString()
   @IsNotEmpty()
-  detailId: string
+  invoiceId: string
 }

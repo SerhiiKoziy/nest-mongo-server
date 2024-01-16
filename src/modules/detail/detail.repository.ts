@@ -12,7 +12,7 @@ export class DetailRepository {
   constructor(@InjectModel(Detail.name) private readonly detailModel: Model<Detail>) {}
 
   async createDetail(createDetailDto: CreateDetailDto, session: ClientSession) {
-    let detail = await this.getDetailById(createDetailDto.detailId);
+    let detail = await this.getDetailById(createDetailDto.invoiceId);
 
     if (detail) {
       throw new ConflictException('Detail already exists');
@@ -24,7 +24,7 @@ export class DetailRepository {
         description: createDetailDto.description,
         recipientEmail: createDetailDto.recipientEmail,
         details: createDetailDto.details,
-        _id: createDetailDto.detailId
+        _id: createDetailDto.invoiceId
       });
 
       detail = await detail.save({ session });
