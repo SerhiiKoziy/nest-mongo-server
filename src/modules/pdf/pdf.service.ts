@@ -2,7 +2,6 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
-  Res
 } from '@nestjs/common';
 import pdf, { CreateOptions } from 'html-pdf';
 import path from 'path';
@@ -10,7 +9,6 @@ import * as fs from 'fs';
 import ejs from 'ejs';
 import nodemailer from 'nodemailer';
 import * as process from 'process';
-import { Response } from 'express';
 import { PdfDto } from './dto/pdf.dto';
 
 const pdfsFolderPath = path.join(process.cwd(), 'pdfs');
@@ -47,7 +45,7 @@ export class PdfService {
     })
   }
 
-  async acceptOffer(pdfDto: PdfDto, @Res() res: Response): Promise<void> {
+  async acceptOffer(pdfDto: PdfDto): Promise<{ message?: string }> {
     try {
       const matchingFile = await this.findPdfFileByPdfId(pdfDto.pdfId);
 
@@ -84,7 +82,7 @@ export class PdfService {
           }
         });
 
-        res.status(200).json({ message: 'PDF sent successfully' });
+        return { message: 'PDF sent successfully' };
       } else {
         throw new HttpException('Matching file not found or already declined.', HttpStatus.NOT_FOUND);
       }
@@ -93,7 +91,7 @@ export class PdfService {
     }
   }
 
-  async declineOffer(pdfId: string, @Res() res: Response): Promise<any> {
+  async declineOffer(pdfId: string): Promise<{ message: string }> {
     try {
       const matchingFile = await this.findPdfFileByPdfId(pdfId);
 
@@ -105,7 +103,7 @@ export class PdfService {
           }
         });
 
-        res.status(200).json( { message: 'Offer declined' });
+        return { message: 'Offer declined' };
       } else {
         throw new HttpException('Matching file not found or already declined.', HttpStatus.NOT_FOUND);
       }

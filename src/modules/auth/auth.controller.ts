@@ -1,4 +1,4 @@
-import { Controller, Post, Body, HttpStatus, BadRequestException, Res } from '@nestjs/common';
+import {Controller, Post, Body, HttpStatus, BadRequestException, Res, UseGuards} from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateUserDto } from '../user/dto/createUser.dto';
 import { AuthService } from './auth.service';
@@ -9,6 +9,7 @@ import { LoginDto } from './dto/login.dto';
 import { ForgotPasswordDto } from '../forgotPassword/dto/forgotPassword.dto';
 import { ResetPasswordDto } from '../forgotPassword/dto/resetPassword.dto';
 import { ForgotPasswordService } from '../forgotPassword/forgotPassword.service';
+import {JwtAuthGuard} from './jwt-auth.guard';
 
 @ApiTags('Authorization')
 @Controller('auth')

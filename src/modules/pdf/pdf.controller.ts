@@ -6,16 +6,17 @@ import {
   Body,
   HttpCode,
   UseGuards,
-  Res, Get, Param, ParseIntPipe
+  Res,
+  Get,
+  Param
 } from '@nestjs/common';
-import {PdfService} from './pdf.service';
-import {PdfDto} from './dto/pdf.dto';
-import {ApiTags} from '@nestjs/swagger';
-import {JwtAuthGuard} from '../auth/jwt-auth.guard';
-import {Response} from 'express';
-import {Connection} from 'mongoose';
-import {InjectConnection} from '@nestjs/mongoose';
-import {RoleGuard} from '../auth/roles.guard';
+import { PdfService } from './pdf.service';
+import { PdfDto } from './dto/pdf.dto';
+import { ApiTags } from '@nestjs/swagger';
+import {  JwtAuthGuard} from '../auth/jwt-auth.guard';
+import { Response } from 'express';
+import { Connection } from 'mongoose';
+import { InjectConnection } from '@nestjs/mongoose';
 
 @ApiTags('Pdfs')
 @Controller('pdf')
@@ -30,7 +31,7 @@ export class PdfController {
     const session = await this.mongoConnection.startSession();
     session.startTransaction();
     try {
-      const pdf = await this.pdfService.acceptOffer(pdfDto, res);
+      const pdf = await this.pdfService.acceptOffer(pdfDto);
       await session.commitTransaction();
       return res.status(HttpStatus.OK).send(pdf);
     } catch (error) {
@@ -48,7 +49,7 @@ export class PdfController {
     const session = await this.mongoConnection.startSession();
     session.startTransaction();
     try {
-      const result = await this.pdfService.declineOffer(id.toString(), res);
+      const result = await this.pdfService.declineOffer(id.toString());
       await session.commitTransaction();
       return res.status(HttpStatus.OK).send(result);
     } catch (error) {
