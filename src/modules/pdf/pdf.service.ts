@@ -10,9 +10,6 @@ import ejs from 'ejs';
 import nodemailer from 'nodemailer';
 import * as process from 'process';
 import { PdfDto } from './dto/pdf.dto';
-import {InjectModel} from '@nestjs/mongoose';
-import {Detail} from '../detail/detail.model';
-import {Model} from 'mongoose';
 
 const pdfsFolderPath = path.join(process.cwd(), 'pdfs');
 const htmlTemplatePath = './invoice/products/template.html';

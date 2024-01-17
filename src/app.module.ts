@@ -13,7 +13,7 @@ import { RolesModule } from './modules/roles/roles.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { PostsModule } from './modules/posts/posts.module';
 import { FilesModule } from './modules/files/files.module';
-import { DetailModule } from './modules/detail/detail.module';
+import { InvoiceModule } from './modules/invoice/invoice.module';
 import { PdfModule } from './modules/pdf/pdf.module';
 
 import { ServeStaticModule } from "@nestjs/serve-static";
@@ -38,7 +38,7 @@ import * as path from 'path';
         AuthModule,
         PostsModule,
         FilesModule,
-        DetailModule,
+        InvoiceModule,
         PdfModule,
     ],
     controllers: [AppController],

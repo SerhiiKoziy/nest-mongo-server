@@ -3,7 +3,7 @@ import { Document } from 'mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 
 @Schema()
-export class Detail extends Document {
+export class Invoice extends Document {
   @ApiProperty({ example: 'Water', description: 'Product Name' })
   @Prop({ required: true })
   name: string;
@@ -21,5 +21,5 @@ export class Detail extends Document {
   details: [];
 }
 
-export const DetailSchema = SchemaFactory.createForClass(Detail);
+export const InvoiceSchema = SchemaFactory.createForClass(Invoice);
 

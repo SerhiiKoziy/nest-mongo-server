@@ -3,21 +3,21 @@ import { ClientSession } from 'mongoose';
 import { Response } from 'express';
 import { Readable } from 'stream';
 
-import { CreateDetailDto } from './dto/createDetail.dto';
-import { UpdateDetailDto } from './dto/updateDetail.dto';
-import { DetailRepository } from './detail.repository';
-import { Detail } from './detail.model';
+import { CreateInvoiceDto } from './dto/createInvoice.dto';
+import { UpdateInvoiceDto } from './dto/updateInvoice.dto';
+import { InvoiceRepository } from './invoice.repository';
+import { Invoice } from './invoice.model';
 import { PdfService } from '../pdf/pdf.service';
 
 @Injectable()
-export class DetailService {
+export class InvoiceService {
   constructor(
-    private readonly detailRepository: DetailRepository,
+    private readonly invoiceRepository: InvoiceRepository,
     private pdfService: PdfService
   ) {}
 
-  async create(createDetailDto: CreateDetailDto, session: ClientSession, @Res() res: Response) {
-    const createDetail = await this.detailRepository.createDetail(createDetailDto, session);
+  async create(createInvoiceDto: CreateInvoiceDto, session: ClientSession, @Res() res: Response) {
+    const createDetail = await this.invoiceRepository.createInvoice(createInvoiceDto, session);
 
     try {
       const dynamicFilename = `generated-${Date.now()}.pdf`;
@@ -33,11 +33,11 @@ export class DetailService {
     }
   }
 
-  async getDetailById(id: string): Promise<Detail> {
-    return await this.detailRepository.getDetailById(id);
+  async getInvoiceById(id: string): Promise<Invoice> {
+    return await this.invoiceRepository.getInvoiceById(id);
   }
 
-  update(id: number, updateDetailDto: UpdateDetailDto) {
+  update(id: number, updateInvoiceDto: UpdateInvoiceDto) {
     return `This action updates a #${id} detail`;
   }
 

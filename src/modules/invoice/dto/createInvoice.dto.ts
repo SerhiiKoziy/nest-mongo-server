@@ -15,7 +15,7 @@ export class AdditionalDetails {
   price: string;
 }
 
-export class CreateDetailDto {
+export class CreateInvoiceDto {
   @IsString()
   @IsNotEmpty()
   name: string;

@@ -16,29 +16,29 @@ import { InjectConnection } from '@nestjs/mongoose';
 import { Response } from 'express';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
-import { DetailService } from './detail.service';
-import { CreateDetailDto } from './dto/createDetail.dto';
-import { Detail } from './detail.model';
+import { InvoiceService } from './invoice.service';
+import { CreateInvoiceDto } from './dto/createInvoice.dto';
+import { Invoice } from './invoice.model';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
-@ApiTags('Details')
-@Controller('details')
-export class DetailController {
-  constructor(@InjectConnection() private readonly mongoConnection: Connection, private detailService: DetailService) {}
+@ApiTags('Invoice')
+@Controller('invoice')
+export class InvoiceController {
+  constructor(@InjectConnection() private readonly mongoConnection: Connection, private invoiceService: InvoiceService) {}
 
   @HttpCode(200)
   @UseGuards(JwtAuthGuard)
-  @ApiOperation({ summary: 'Create detail' })
-  @ApiResponse({ status: 200, type: Detail })
-  @Post('/createDetail')
-  async create(@Body() createDetailDto: CreateDetailDto, @Res() res: Response) {
+  @ApiOperation({ summary: 'Create invoice' })
+  @ApiResponse({ status: 200, type: Invoice })
+  @Post('/createInvoice')
+  async create(@Body() createInvoiceDto: CreateInvoiceDto, @Res() res: Response) {
     const session = await this.mongoConnection.startSession();
     session.startTransaction();
 
     try {
-      const newDetail = await this.detailService.create(createDetailDto, session, res)
+      const newInvoice = await this.invoiceService.create(createInvoiceDto, session, res)
       await session.commitTransaction();
-      return res.status(HttpStatus.OK).send(newDetail);
+      return res.status(HttpStatus.OK).send(newInvoice);
     } catch (error) {
       await session.abortTransaction();
       throw new BadRequestException(error);
@@ -49,18 +49,18 @@ export class DetailController {
 
   @HttpCode(200)
   @UseGuards(JwtAuthGuard)
-  @ApiOperation({ summary: 'Get detail by id' })
-  @ApiResponse({ status: 200, type: Detail })
-  @Get('/getDetailById/:id')
+  @ApiOperation({ summary: 'Get invoice by id' })
+  @ApiResponse({ status: 200, type: Invoice })
+  @Get('/getInvoiceById/:id')
   async getDetailById(@Param('id') id: string, @Res() res: Response) {
     const session = await this.mongoConnection.startSession();
     session.startTransaction();
 
     try {
       await session.commitTransaction();
-      const detail = await this.detailService.getDetailById(id);
+      const invoice = await this.invoiceService.getInvoiceById(id);
 
-      return res.status(HttpStatus.OK).send(detail);
+      return res.status(HttpStatus.OK).send(invoice);
     } catch (error) {
       await session.abortTransaction();
       throw new BadRequestException(error);
@@ -69,8 +69,8 @@ export class DetailController {
     }
   }
 
-  @Delete('/detail/:id')
+  @Delete('/invoice/:id')
   remove(@Param('id') id: string) {
-    return this.detailService.remove(+id);
+    return this.invoiceService.remove(+id);
   }
 }
