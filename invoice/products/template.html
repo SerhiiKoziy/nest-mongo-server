@@ -8,7 +8,7 @@
   <style>
     body {
       width: 100%;
-      box-sizing: border-box;
+      margin: auto;
       background: #eee;
     }
 
@@ -58,7 +58,7 @@
       font-size: 20px;
       font-weight: 600;
       width: 100%;
-      vertical-align: middle
+      vertical-align: middle;
     }
 
     .invoice-price small {
@@ -126,7 +126,7 @@
 <link href='https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css' rel='stylesheet'>
 <table class='container'>
   <tr>
-    <td class='col-md-12'>
+    <td class='col-md-10'>
       <table class='invoice'>
         <!-- begin invoice-company -->
         <tr>
@@ -144,7 +144,7 @@
 
         <!-- begin invoice-header -->
         <tr>
-          <td class='invoice-header' colspan='3'>
+          <td class='invoice-header'>
             <div class='invoice-date'>
               <div class='invoice-detail'>
                 Name: {{name}}<br>
@@ -164,21 +164,21 @@
               <table class='table table-invoice'>
                 <thead>
                 <tr>
-                  <th class='text-center'>№</th>
-                  <th class='text-center'>Product name</th>
-                  <th class='text-center'>Count</th>
-                  <th class='text-center'>Price</th>
-                  <th class='text-center'>Total</th>
+                  <th>№</th>
+                  <th>Product name</th>
+                  <th>Count</th>
+                  <th>Price</th>
+                  <th>Total</th>
                 </tr>
                 </thead>
                 <tbody>
                 {{#each details}}
                 <tr class='product-row'>
-                  <td class='text-center'>{{inc @index}}</td>
-                  <td class='text-center'>{{this.productName}}</td>
-                  <td class='text-center'>{{this.count}}</td>
-                  <td class='text-center'>{{this.price}}</td>
-                  <td class='text-center'>{{multiply this.count this.price}}$</td>
+                  <td>{{inc @index}}</td>
+                  <td>{{this.productName}}</td>
+                  <td>{{this.count}}</td>
+                  <td>{{this.price}}</td>
+                  <td>{{multiply this.count this.price}}$</td>
                 </tr>
                 {{/each}}
                 </tbody>
@@ -199,7 +199,7 @@
 
         <!-- begin invoice-note -->
         <tr>
-          <td class='invoice-note' colspan='3'>
+          <td class='invoice-note'>
             * Make all cheques payable to [Your Company Name]<br>
             * Payment is due within 30 days<br>
             * If you have any questions concerning this invoice, contact [Name, Phone Number, Email]
@@ -209,7 +209,7 @@
 
         <!-- begin invoice-footer -->
         <tr>
-          <td class='invoice-footer' colspan='3'>
+          <td class='invoice-footer'>
             <p class='text-center m-b-5 f-w-600'>
               THANK YOU FOR YOUR BUSINESS
             </p>
