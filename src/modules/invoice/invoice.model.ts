@@ -16,7 +16,7 @@ export class Invoice extends Document {
   @Prop({ required: true, })
   recipientEmail: string;
 
-  @ApiProperty({ example: 'productName: Item, count: 1 price: 100', description: 'Products' })
+  @ApiProperty({ example: 'productName: Item, count: 1, price: 100', description: 'Products' })
   @Prop({ required: true, })
   details: [];
 }

@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang='en'>
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
   <title>PDF Template</title>
 
   <style>
-    body{
-      margin: auto;
-      max-width: 800px;
-      background:#eee;
+    body {
+      width: 100%;
+      box-sizing: border-box;
+      background: #eee;
     }
 
     .invoice {
@@ -28,7 +28,7 @@
       padding: 20px;
     }
 
-    .invoice-date .date,
+    .invoice-date,
     .invoice-from strong,
     .invoice-to strong {
       font-size: 16px;
@@ -110,7 +110,7 @@
       padding-bottom: 10px;
     }
 
-    .invoice>div:not(.invoice-footer) {
+    .invoice > div:not(.invoice-footer) {
       margin-bottom: 20px
     }
 
@@ -123,125 +123,106 @@
 </head>
 
 <body>
-<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
-<table class="container">
+<link href='https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css' rel='stylesheet'>
+<table class='container'>
   <tr>
-  <td class="col-md-12">
-    <table class="invoice">
-      <!-- begin invoice-company -->
-      <tr>
-      <td class="invoice-company text-inverse f-w-600">
-            <span class="pull-right hidden-print">
-            <a href="javascript:;" class="btn btn-sm btn-white m-b-10 p-l-5"><i class="fa fa-file t-plus-1 text-danger fa-fw fa-lg"></i> Export as PDF</a>
-            <a href="javascript:;" onclick="window.print()" class="btn btn-sm btn-white m-b-10 p-l-5"><i class="fa fa-print t-plus-1 fa-fw fa-lg"></i> Print</a>
+    <td class='col-md-12'>
+      <table class='invoice'>
+        <!-- begin invoice-company -->
+        <tr>
+          <td class='invoice-company text-inverse f-w-600'>
+            <span class='pull-right hidden-print'>
+            <a href='javascript:;' class='btn btn-sm btn-white m-b-10 p-l-5'><i
+              class='fa fa-file t-plus-1 text-danger fa-fw fa-lg'></i> Export as PDF</a>
+            <a href='javascript:;' onclick='window.print()' class='btn btn-sm btn-white m-b-10 p-l-5'><i
+              class='fa fa-print t-plus-1 fa-fw fa-lg'></i> Print</a>
             </span>
-        Company Name, Inc
-      </td>
-      </tr>
-      <!-- end invoice-company -->
+            Company Name, Inc
+          </td>
+        </tr>
+        <!-- end invoice-company -->
 
-      <!-- begin invoice-header -->
-      <tr>
-      <td class="invoice-header" colspan="3">
-        <div class="invoice-date">
-          <div class="date text-inverse m-t-5"><%= today.getDate() %>.<%= today.getMonth() + 1 %>.<%= today.getFullYear() %></div>
-          <div class="invoice-detail">
-            Name: <%= name %><br>
-            Description: <%= description %
-          </div>
-        </div>
-      </td>
-      </tr>
-      <!-- end invoice-header -->
+        <!-- begin invoice-header -->
+        <tr>
+          <td class='invoice-header' colspan='3'>
+            <div class='invoice-date'>
+              <div class='invoice-detail'>
+                Name: {{name}}<br>
+                Description: {{description}}<br>
+                {{today}}
+              </div>
+            </div>
+          </td>
+        </tr>
+        <!-- end invoice-header -->
 
-      <!-- begin invoice-content -->
-      <tr>
-      <td class="invoice-content" colspan="3">
-        <!-- begin table-responsive -->
-        <div class="table-responsive">
-          <table class="table table-invoice">
-            <thead>
-            <tr>
-              <th class="text-center">№</th>
-              <th class="text-center">Product name</th>
-              <th class="text-center">Count</th>
-              <th class="text-center">Price</th>
-              <th class="text-right">Total</th>
-            </tr>
-            </thead>
-            <tbody>
-            <% details.forEach((item, index) => { %>
-            <tr class="product-row">
-              <td><%= index + 1 %></td>
-              <td><%= item.productName %></td>
-              <td class="text-center"><%= item.count %></td>
-              <td class="text-center"><%= item.price %></td>
-              <td class="text-right"><%= item.count * item.price %>$</td>
-            </tr>
-            <% }) %>
-            </tbody>
-          </table>
-        </div>
-        <!-- end table-responsive -->
+        <!-- begin invoice-content -->
+        <tr>
+          <td class='invoice-content' colspan='5'>
+            <!-- begin table-responsive -->
+            <div class='table-responsive'>
+              <table class='table table-invoice'>
+                <thead>
+                <tr>
+                  <th class='text-center'>№</th>
+                  <th class='text-center'>Product name</th>
+                  <th class='text-center'>Count</th>
+                  <th class='text-center'>Price</th>
+                  <th class='text-center'>Total</th>
+                </tr>
+                </thead>
+                <tbody>
+                {{#each details}}
+                <tr class='product-row'>
+                  <td class='text-center'>{{inc @index}}</td>
+                  <td class='text-center'>{{this.productName}}</td>
+                  <td class='text-center'>{{this.count}}</td>
+                  <td class='text-center'>{{this.price}}</td>
+                  <td class='text-center'>{{multiply this.count this.price}}$</td>
+                </tr>
+                {{/each}}
+                </tbody>
+              </table>
+            </div>
+            <!-- end table-responsive -->
 
-        <!-- begin invoice-price -->
-        <div class="invoice-price" id="total-price">
-          <div class="invoice-price-right">
-            <small>TOTAL</small> <span class="f-w-500">$0.00</span>
-          </div>
-        </div>
-        <!-- end invoice-price -->
-      </td>
-      </tr>
-      <!-- end invoice-content -->
+            <!-- begin invoice-price -->
+            <div class='invoice-price' id='total-price'>
+              <div class='invoice-price-right'>
+                <small>TOTAL</small> <span class='f-w-500'>${{calculateTotal details}}</span>
+              </div>
+            </div>
+            <!-- end invoice-price -->
+          </td>
+        </tr>
+        <!-- end invoice-content -->
 
-      <!-- begin invoice-note -->
-      <tr>
-      <td class="invoice-note" colspan="3">
-        * Make all cheques payable to [Your Company Name]<br>
-        * Payment is due within 30 days<br>
-        * If you have any questions concerning this invoice, contact  [Name, Phone Number, Email]
-      </td>
-      </tr>
-      <!-- end invoice-note -->
+        <!-- begin invoice-note -->
+        <tr>
+          <td class='invoice-note' colspan='3'>
+            * Make all cheques payable to [Your Company Name]<br>
+            * Payment is due within 30 days<br>
+            * If you have any questions concerning this invoice, contact [Name, Phone Number, Email]
+          </td>
+        </tr>
+        <!-- end invoice-note -->
 
-      <!-- begin invoice-footer -->
-      <tr>
-      <td class="invoice-footer" colspan="3">
-        <p class="text-center m-b-5 f-w-600">
-          THANK YOU FOR YOUR BUSINESS
-        </p>
-        <p class="text-center">
-          <span class="m-r-10"><i class="fa fa-fw fa-lg fa-globe"></i> example.com</span>
-          <span class="m-r-10"><i class="fa fa-fw fa-lg fa-envelope"></i> example@gmail.com</span>
-        </p>
-      </td>
-      </tr>
-      <!-- end invoice-footer -->
-    </table>
-  </td>
+        <!-- begin invoice-footer -->
+        <tr>
+          <td class='invoice-footer' colspan='3'>
+            <p class='text-center m-b-5 f-w-600'>
+              THANK YOU FOR YOUR BUSINESS
+            </p>
+            <p class='text-center'>
+              <span class='m-r-10'><i class='fa fa-fw fa-lg fa-globe'></i> example.com</span>
+              <span class='m-r-10'><i class='fa fa-fw fa-lg fa-envelope'></i> example@gmail.com</span>
+            </p>
+          </td>
+        </tr>
+        <!-- end invoice-footer -->
+      </table>
+    </td>
   </tr>
 </table>
 </body>
-
-<script>
-  document.addEventListener("DOMContentLoaded", function() {
-    const productRows = document.querySelectorAll('.row-product tr');
-
-    let totalAmount = 0;
-
-    productRows.forEach(function(row) {
-      const priceElement = row.querySelector('.text-right');
-      if (priceElement) {
-        let price = parseFloat(priceElement.textContent.replace('$', '').trim());
-        totalAmount += price;
-      }
-    });
-
-    const totalPriceElement = document.getElementById('total-price').querySelector('.f-w-500');
-    if (totalPriceElement) {
-      totalPriceElement.textContent = '$' + totalAmount.toFixed(2);
-    }
-  });
-</script>
 </html>

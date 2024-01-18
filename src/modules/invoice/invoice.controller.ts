@@ -1,16 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  Delete,
-  Res,
-  HttpCode,
-  HttpStatus,
-  BadRequestException,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Res, HttpCode, HttpStatus, BadRequestException, UseGuards } from '@nestjs/common';
 import { Connection } from 'mongoose';
 import { InjectConnection } from '@nestjs/mongoose';
 import { Response } from 'express';
@@ -27,7 +15,7 @@ export class InvoiceController {
   constructor(@InjectConnection() private readonly mongoConnection: Connection, private invoiceService: InvoiceService) {}
 
   @HttpCode(200)
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Create invoice' })
   @ApiResponse({ status: 200, type: Invoice })
   @Post('/createInvoice')
@@ -36,7 +24,7 @@ export class InvoiceController {
     session.startTransaction();
 
     try {
-      const newInvoice = await this.invoiceService.create(createInvoiceDto, session, res)
+      const newInvoice = await this.invoiceService.create(createInvoiceDto, session, res);
       await session.commitTransaction();
       return res.status(HttpStatus.OK).send(newInvoice);
     } catch (error) {

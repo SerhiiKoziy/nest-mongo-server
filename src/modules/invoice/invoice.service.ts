@@ -11,19 +11,16 @@ import { PdfService } from '../pdf/pdf.service';
 
 @Injectable()
 export class InvoiceService {
-  constructor(
-    private readonly invoiceRepository: InvoiceRepository,
-    private pdfService: PdfService
-  ) {}
+  constructor(private readonly invoiceRepository: InvoiceRepository, private pdfService: PdfService) {}
 
   async create(createInvoiceDto: CreateInvoiceDto, session: ClientSession, @Res() res: Response) {
-    const createDetail = await this.invoiceRepository.createInvoice(createInvoiceDto, session);
+    const createInvoice = await this.invoiceRepository.createInvoice(createInvoiceDto, session);
 
     try {
       const dynamicFilename = `generated-${Date.now()}.pdf`;
-      const { content} = await this.pdfService.generatePdf(createDetail, dynamicFilename);
+      const result = await this.pdfService.generatePDF(createInvoice, dynamicFilename);
 
-      const pdfStream = Readable.from(content);
+      const pdfStream = Readable.from(result);
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', `attachment; filename=${dynamicFilename}`);
 

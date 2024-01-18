@@ -1,49 +1,63 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-} from '@nestjs/common';
-import pdf, { CreateOptions } from 'html-pdf';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import puppeteer from 'puppeteer';
 import path from 'path';
-import * as fs from 'fs';
-import ejs from 'ejs';
 import nodemailer from 'nodemailer';
+import * as fs from 'fs';
 import * as process from 'process';
+import * as handlebars from 'handlebars';
+
 import { PdfDto } from './dto/pdf.dto';
+import { Invoice } from '../invoice/invoice.model';
 
 const pdfsFolderPath = path.join(process.cwd(), 'pdfs');
-const htmlTemplatePath = './invoice/products/template.html';
+const htmlTemplatePath = path.join(process.cwd(), 'invoice', 'products', 'template.html');
 const htmlTemplate = fs.readFileSync(htmlTemplatePath, { encoding: 'utf-8' });
 
 @Injectable()
 export class PdfService {
+  async generatePDF(data: Invoice, filename: string): Promise<Buffer> {
+    try {
+      const compiledTemplate = handlebars.compile(htmlTemplate);
 
-  async generatePdf(data: any, filename: string): Promise<{ filename: string, content: Buffer }> {
+      handlebars.registerHelper('inc', function (value, options) {
+        return parseInt(value) + 1;
+      });
+      handlebars.registerHelper('multiply', function (a: number, b: number, options) {
+        return a * b;
+      });
+      handlebars.registerHelper('calculateTotal', function (details: any[], options) {
+        return details.reduce((total, product) => {
+          const count = parseFloat(product.count);
+          const price = parseFloat(product.price);
+          return total + count * price;
+        }, 0);
+      });
 
-    return new Promise((resolve, reject) => {
-      const htmlContent = ejs.render(htmlTemplate, {
+      const dataTemplate = {
         name: data.name,
-        today: new Date(),
         description: data.description,
         recipientEmail: data.recipientEmail,
-        details: data.details
-      });
-
-      const pdfOptions: CreateOptions = {
-        format: 'A4',
+        details: data.details,
+        today: new Date().toLocaleString('en-US', {
+          weekday: 'short',
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric',
+        }),
       };
 
-      const pdfFilePath = path.join(pdfsFolderPath, filename);
+      const htmlContent = compiledTemplate(dataTemplate);
 
-      pdf.create(htmlContent, pdfOptions).toFile(pdfFilePath, (err) => {
-        if (err) {
-          reject(err);
-        } else {
-          const fileContent = fs.readFileSync(pdfFilePath);
-          resolve({ filename, content: fileContent });
-        }
+      const browser = await puppeteer.launch({
+        headless: 'new',
       });
-    })
+      const page = await browser.newPage();
+      await page.setContent(htmlContent);
+
+      return await page.pdf({ path: path.join(pdfsFolderPath, filename), format: 'A4' });
+    } catch (err) {
+      throw new HttpException(err, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   async acceptOffer(pdfDto: PdfDto): Promise<{ message?: string }> {
@@ -71,7 +85,7 @@ export class PdfService {
             {
               filename: `Invoice: ${pdfDto.pdfId}`,
               content: fileContent,
-              contentType: 'application/pdf'
+              contentType: 'application/pdf',
             },
           ],
         };
@@ -127,7 +141,7 @@ export class PdfService {
     });
   }
 
-  private getPfdByID (files: string[], pdfId: string) {
+  private getPfdByID(files: string[], pdfId: string) {
     return files.find((file) => file === `${pdfId}.pdf`);
   }
 }

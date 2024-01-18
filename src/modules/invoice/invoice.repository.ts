@@ -1,7 +1,4 @@
-import {
-  ConflictException,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { ConflictException, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { ClientSession, Model } from 'mongoose';
 
@@ -24,7 +21,7 @@ export class InvoiceRepository {
         description: createInvoiceDto.description,
         recipientEmail: createInvoiceDto.recipientEmail,
         details: createInvoiceDto.details,
-        _id: createInvoiceDto.invoiceId
+        _id: createInvoiceDto.invoiceId,
       });
 
       invoice = await invoice.save({ session });
