@@ -8,7 +8,7 @@ import { CreateInvoiceDto } from './dto/createInvoice.dto';
 export class InvoiceRepository {
   constructor(@InjectModel(Invoice.name) private readonly invoiceModel: Model<Invoice>) {}
 
-  async createInvoice(createInvoiceDto: CreateInvoiceDto, session: ClientSession) {
+  async createInvoice(createInvoiceDto: CreateInvoiceDto, session: ClientSession, userId: string) {
     let invoice = await this.getInvoiceById(createInvoiceDto.invoiceId);
 
     if (invoice) {
@@ -22,6 +22,7 @@ export class InvoiceRepository {
         recipientEmail: createInvoiceDto.recipientEmail,
         details: createInvoiceDto.details,
         _id: createInvoiceDto.invoiceId,
+        userId,
       });
 
       invoice = await invoice.save({ session });

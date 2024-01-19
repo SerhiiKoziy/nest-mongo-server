@@ -1,16 +1,11 @@
-import {
-  UnauthorizedException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-} from "@nestjs/common";
-import { ClientSession } from "mongoose";
-import { CreateUserDto } from "../user/dto/createUser.dto";
-import { UserService } from "../user/user.service";
-import { JwtService } from "@nestjs/jwt";
-import * as bcrypt from "bcryptjs";
-import { User } from "../user/user.model";
-import { LoginDto } from "./dto/login.dto";
+import { UnauthorizedException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { ClientSession } from 'mongoose';
+import { CreateUserDto } from '../user/dto/createUser.dto';
+import { UserService } from '../user/user.service';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcryptjs';
+import { User } from '../user/user.model';
+import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
@@ -20,7 +15,6 @@ export class AuthService {
     try {
       const user = await this.validateUser(loginDto);
       return await this.generateToken(user);
-
     } catch (error) {
       throw new HttpException('Wrong email or password', HttpStatus.BAD_REQUEST);
     }
@@ -34,9 +28,18 @@ export class AuthService {
     }
 
     const hashPassword = await bcrypt.hash(userDto.password, 5);
-    const user = await this.userService.createUser({ ...userDto, password: hashPassword }, session)
+    const user = await this.userService.createUser({ ...userDto, password: hashPassword }, session);
 
-    return this.generateToken(user)
+    return this.generateToken(user);
+  }
+
+  async getUserIdFromToken(token: string): Promise<string | null> {
+    try {
+      const decodedToken = await this.jwtService.verify(token);
+      return decodedToken.id;
+    } catch (error) {
+      throw new HttpException('Invalid or expired token', HttpStatus.BAD_REQUEST);
+    }
   }
 
   private async generateToken(user: User) {
@@ -48,8 +51,8 @@ export class AuthService {
     };
 
     return {
-      token: this.jwtService.sign(payload)
-    }
+      token: this.jwtService.sign(payload),
+    };
   }
 
   private async validateUser(loginDto: LoginDto) {
@@ -60,6 +63,6 @@ export class AuthService {
       return user;
     }
 
-    throw new UnauthorizedException({ message: "Wrong email or password" })
+    throw new UnauthorizedException({ message: 'Wrong email or password' });
   }
 }

@@ -8,13 +8,18 @@ import { UpdateInvoiceDto } from './dto/updateInvoice.dto';
 import { InvoiceRepository } from './invoice.repository';
 import { Invoice } from './invoice.model';
 import { PdfService } from '../pdf/pdf.service';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class InvoiceService {
-  constructor(private readonly invoiceRepository: InvoiceRepository, private pdfService: PdfService) {}
+  constructor(private readonly invoiceRepository: InvoiceRepository, private pdfService: PdfService, private authService: AuthService) {}
 
   async create(createInvoiceDto: CreateInvoiceDto, session: ClientSession, @Res() res: Response) {
-    const createInvoice = await this.invoiceRepository.createInvoice(createInvoiceDto, session);
+    const authHeader = res.req.headers.authorization;
+    const token = authHeader.split(' ')[1];
+    const userId = await this.authService.getUserIdFromToken(token);
+
+    const createInvoice = await this.invoiceRepository.createInvoice(createInvoiceDto, session, userId);
 
     try {
       const dynamicFilename = `generated-${Date.now()}.pdf`;
