@@ -39,6 +39,14 @@ export class InvoiceService {
     return await this.invoiceRepository.getInvoiceById(id);
   }
 
+  async getAllInvoices(res: Response): Promise<Invoice[]> {
+    const authHeader = res.req.headers.authorization;
+    const token = authHeader.split(' ')[1];
+    const userId = await this.authService.getUserIdFromToken(token);
+
+    return await this.invoiceRepository.getAll(userId);
+  }
+
   update(id: number, updateInvoiceDto: UpdateInvoiceDto) {
     return `This action updates a #${id} detail`;
   }

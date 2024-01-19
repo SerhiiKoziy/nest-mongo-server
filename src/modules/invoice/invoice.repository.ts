@@ -37,6 +37,10 @@ export class InvoiceRepository {
     return invoice;
   }
 
+  async getAll(id: string): Promise<Invoice[]> {
+    return await this.invoiceModel.find({ userId: id }).exec();
+  }
+
   async getInvoiceById(id: string): Promise<Invoice> {
     let invoice: Invoice;
     try {

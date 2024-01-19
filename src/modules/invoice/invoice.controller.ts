@@ -57,6 +57,16 @@ export class InvoiceController {
     }
   }
 
+  @HttpCode(200)
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Get all invoices' })
+  @Get('/getAllInvoices')
+  async getAllInvoices(@Res() res: Response) {
+    const invoices = await this.invoiceService.getAllInvoices(res);
+
+    return res.status(HttpStatus.OK).send(invoices);
+  }
+
   @Delete('/invoice/:id')
   remove(@Param('id') id: string) {
     return this.invoiceService.remove(+id);
