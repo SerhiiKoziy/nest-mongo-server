@@ -12,7 +12,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 @ApiTags('Invoice')
 @Controller('invoice')
 export class InvoiceController {
-  constructor(@InjectConnection() private readonly mongoConnection: Connection, private invoiceService: InvoiceService) {}
+  constructor(@InjectConnection() private readonly mongoConnection: Connection, private readonly invoiceService: InvoiceService) {}
 
   @HttpCode(200)
   @UseGuards(JwtAuthGuard)
@@ -38,23 +38,11 @@ export class InvoiceController {
   @HttpCode(200)
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Get invoice by id' })
-  @ApiResponse({ status: 200, type: Invoice })
   @Get('/getInvoiceById/:id')
-  async getDetailById(@Param('id') id: string, @Res() res: Response) {
-    const session = await this.mongoConnection.startSession();
-    session.startTransaction();
+  async getInvoiceById(@Param('id') id: number, @Res() res: Response) {
+    const invoice = await this.invoiceService.getInvoiceById(id.toString());
 
-    try {
-      await session.commitTransaction();
-      const invoice = await this.invoiceService.getInvoiceById(id);
-
-      return res.status(HttpStatus.OK).send(invoice);
-    } catch (error) {
-      await session.abortTransaction();
-      throw new BadRequestException(error);
-    } finally {
-      await session.endSession();
-    }
+    return res.status(HttpStatus.OK).send(invoice);
   }
 
   @HttpCode(200)
