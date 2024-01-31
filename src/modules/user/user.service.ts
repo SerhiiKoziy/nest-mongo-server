@@ -26,7 +26,7 @@ export class UserService {
     return createdUser;
   }
 
-  async getUserById(id: MongooseSchema.Types.ObjectId): Promise<User> {
+  async getUserById(id: MongooseSchema.Types.ObjectId | string): Promise<User> {
     return await this.userRepository.getUserById(id);
   }
 

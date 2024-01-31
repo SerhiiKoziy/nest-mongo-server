@@ -5,9 +5,12 @@ import nodemailer from 'nodemailer';
 import * as fs from 'fs';
 import * as process from 'process';
 import * as handlebars from 'handlebars';
+import { Response } from 'express';
 
 import { PdfDto } from './dto/pdf.dto';
 import { Invoice } from '../invoice/invoice.model';
+import { AuthService } from '../auth/auth.service';
+import { UserService } from '../user/user.service';
 
 const pdfsFolderPath = path.join(process.cwd(), 'pdfs');
 const htmlTemplatePath = path.join(process.cwd(), 'invoice', 'products', 'template.html');
@@ -15,17 +18,19 @@ const htmlTemplate = fs.readFileSync(htmlTemplatePath, { encoding: 'utf-8' });
 
 @Injectable()
 export class PdfService {
+  constructor(private authService: AuthService, private userService: UserService) {}
+
   async generatePDF(data: Invoice, filename: string): Promise<Buffer> {
     try {
       const compiledTemplate = handlebars.compile(htmlTemplate);
 
-      handlebars.registerHelper('inc', function (value, options) {
+      handlebars.registerHelper('inc', function (value) {
         return parseInt(value) + 1;
       });
-      handlebars.registerHelper('multiply', function (a: number, b: number, options) {
+      handlebars.registerHelper('multiply', function (a: number, b: number) {
         return a * b;
       });
-      handlebars.registerHelper('calculateTotal', function (details: any[], options) {
+      handlebars.registerHelper('calculateTotal', function (details: any[]) {
         return details.reduce((total, product) => {
           const count = parseFloat(product.count);
           const price = parseFloat(product.price);
@@ -60,37 +65,23 @@ export class PdfService {
     }
   }
 
-  async acceptOffer(pdfDto: PdfDto): Promise<{ message?: string }> {
+  async acceptOffer(pdfDto: PdfDto, res: Response): Promise<{ message?: string }> {
+    const authHeader = res.req.headers.authorization;
+    const token = authHeader.split(' ')[1];
+    const userId = await this.authService.getUserIdFromToken(token);
+
     try {
+      const { email: senderEmail } = await this.userService.getUserById(userId);
       const matchingFile = await this.findPdfFileByPdfId(pdfDto.pdfId);
 
       if (matchingFile) {
         const filePath = path.join(pdfsFolderPath, matchingFile);
         const fileContent = fs.readFileSync(filePath);
 
-        const transporter = nodemailer.createTransport({
-          service: process.env.MAIL_HOST,
-          auth: {
-            user: process.env.SMTP_USERNAME,
-            pass: process.env.SMTP_PASSWORD,
-          },
-        });
+        await this.sendInvoice(pdfDto.recipientEmail, pdfDto.pdfId, fileContent);
 
-        const mailOptions = {
-          from: process.env.SMTP_USERNAME,
-          to: pdfDto.recipientEmail,
-          subject: 'Invoice',
-          text: 'Please find the attached invoice.',
-          attachments: [
-            {
-              filename: `Invoice: ${pdfDto.pdfId}`,
-              content: fileContent,
-              contentType: 'application/pdf',
-            },
-          ],
-        };
+        await this.sendInvoiceCopy(senderEmail, pdfDto.recipientEmail, pdfDto.pdfId, fileContent);
 
-        await transporter.sendMail(mailOptions);
         fs.unlink(filePath, (unlinkErr) => {
           if (unlinkErr) {
             console.error('Error deleting file:', unlinkErr);
@@ -125,6 +116,58 @@ export class PdfService {
     } catch (error) {
       throw new HttpException(`Error declining offer: ${error.message}`, HttpStatus.BAD_REQUEST);
     }
+  }
+
+  private async sendInvoiceCopy(senderEmail: string, recipientEmail: string, pdfId: string, fileContent: Buffer): Promise<void> {
+    const transporter = nodemailer.createTransport({
+      service: process.env.MAIL_HOST,
+      auth: {
+        user: process.env.SMTP_USERNAME,
+        pass: process.env.SMTP_PASSWORD,
+      },
+    });
+
+    const senderMailOptions = {
+      from: process.env.SMTP_USERNAME,
+      to: senderEmail,
+      subject: 'Copy of Invoice',
+      text: `You have successfully sent an invoice to ${recipientEmail}`,
+      attachments: [
+        {
+          filename: `Invoice: ${pdfId}`,
+          content: fileContent,
+          contentType: 'application/pdf',
+        },
+      ],
+    };
+
+    await transporter.sendMail(senderMailOptions);
+  }
+
+  private async sendInvoice(recipientEmail: string, pdfId: string, fileContent: Buffer): Promise<void> {
+    const transporter = nodemailer.createTransport({
+      service: process.env.MAIL_HOST,
+      auth: {
+        user: process.env.SMTP_USERNAME,
+        pass: process.env.SMTP_PASSWORD,
+      },
+    });
+
+    const mailOptions = {
+      from: process.env.SMTP_USERNAME,
+      to: recipientEmail,
+      subject: 'Invoice',
+      text: 'Please find the attached invoice.',
+      attachments: [
+        {
+          filename: `Invoice: ${pdfId}`,
+          content: fileContent,
+          contentType: 'application/pdf',
+        },
+      ],
+    };
+
+    await transporter.sendMail(mailOptions);
   }
 
   private async findPdfFileByPdfId(pdfId: string): Promise<string | null> {

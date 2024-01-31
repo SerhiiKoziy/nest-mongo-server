@@ -59,4 +59,14 @@ export class InvoiceController {
   remove(@Param('id') id: string) {
     return this.invoiceService.remove(+id);
   }
+
+  @HttpCode(200)
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Send again invoice' })
+  @Get('/sendAgain')
+  async sendAgain(@Res() res: Response) {
+    const invoices = await this.invoiceService.getAllInvoices(res);
+
+    return res.status(HttpStatus.OK).send(invoices);
+  }
 }

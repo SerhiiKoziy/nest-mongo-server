@@ -8,17 +8,22 @@ import { InvoiceRepository } from './invoice.repository';
 import { PdfService } from '../pdf/pdf.service';
 import { RolesModule } from '../roles/roles.module';
 import { AuthModule } from '../auth/auth.module';
+import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Invoice.name, schema: InvoiceSchema }]),
+    MongooseModule.forFeature([
+      {
+        name: Invoice.name,
+        schema: InvoiceSchema,
+      },
+    ]),
     RolesModule,
-    forwardRef(() => AuthModule)
+    UserModule,
+    forwardRef(() => AuthModule),
   ],
   controllers: [InvoiceController],
   providers: [PdfService, InvoiceService, InvoiceRepository],
-  exports: [InvoiceService, InvoiceRepository]
+  exports: [InvoiceService, InvoiceRepository],
 })
-
 export class InvoiceModule {}
-

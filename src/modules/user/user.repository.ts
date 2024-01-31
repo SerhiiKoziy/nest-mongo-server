@@ -35,7 +35,7 @@ export class UserRepository {
     return user;
   }
 
-  async getUserById(id: MongooseSchema.Types.ObjectId) {
+  async getUserById(id: MongooseSchema.Types.ObjectId | string) {
     let user;
     try {
       user = await this.userModel.findById({ _id: id });
