@@ -12,7 +12,7 @@ export class InvoiceRepository {
     let invoice = await this.getInvoiceById(createInvoiceDto.invoiceId);
 
     if (invoice) {
-      throw new ConflictException('Detail already exists');
+      throw new ConflictException('Invoice already exists');
     }
 
     try {
