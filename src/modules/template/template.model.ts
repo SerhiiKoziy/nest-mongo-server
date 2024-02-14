@@ -20,10 +20,6 @@ export class Template extends Document {
   @Prop()
   companyImage: string;
 
-  // @ApiProperty({ example: '89a8f3b2246071a4b8b21f69', description: 'User ID' })
-  // @Prop()
-  // userId: string;
-
   @ApiProperty({ example: '2121313234', description: 'Bill' })
   @Prop()
   bill: string;
@@ -43,6 +39,10 @@ export class Template extends Document {
   @ApiProperty({ example: '203390', description: 'Post code' })
   @Prop()
   postCode: string;
+
+  @ApiProperty({ example: '89a8f3b2246071a4b8b21f69', description: 'User ID' })
+  @Prop()
+  userId: string;
 }
 
 export const TemplateSchema = SchemaFactory.createForClass(Template);

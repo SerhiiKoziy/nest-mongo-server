@@ -66,9 +66,7 @@ export class PdfService {
   }
 
   async acceptOffer(pdfDto: PdfDto, res: Response): Promise<{ message?: string }> {
-    const authHeader = res.req.headers.authorization;
-    const token = authHeader.split(' ')[1];
-    const userId = await this.authService.getUserIdFromToken(token);
+    const userId = await this.authService.getUserIdFromToken(res);
 
     try {
       const { email: senderEmail } = await this.userService.getUserById(userId);

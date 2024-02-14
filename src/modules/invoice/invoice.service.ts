@@ -14,9 +14,7 @@ export class InvoiceService {
   constructor(private readonly invoiceRepository: InvoiceRepository, private pdfService: PdfService, private authService: AuthService) {}
 
   async create(createInvoiceDto: CreateInvoiceDto, session: ClientSession, res: Response) {
-    const authHeader = res.req.headers.authorization;
-    const token = authHeader.split(' ')[1];
-    const userId = await this.authService.getUserIdFromToken(token);
+    const userId = await this.authService.getUserIdFromToken(res);
 
     const createInvoice = await this.invoiceRepository.createInvoice(createInvoiceDto, session, userId);
     await this.generateAndSendPDF(createInvoice, res);
@@ -27,9 +25,7 @@ export class InvoiceService {
   }
 
   async getAllInvoices(res: Response): Promise<Invoice[]> {
-    const authHeader = res.req.headers.authorization;
-    const token = authHeader.split(' ')[1];
-    const userId = await this.authService.getUserIdFromToken(token);
+    const userId = await this.authService.getUserIdFromToken(res);
 
     return await this.invoiceRepository.getAll(userId);
   }

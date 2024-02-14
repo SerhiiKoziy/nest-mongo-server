@@ -1,9 +1,11 @@
 import { UnauthorizedException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ClientSession } from 'mongoose';
+import { Response } from 'express';
+import * as bcrypt from 'bcryptjs';
+
 import { CreateUserDto } from '../user/dto/createUser.dto';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcryptjs';
 import { User } from '../user/user.model';
 import { LoginDto } from './dto/login.dto';
 
@@ -33,7 +35,10 @@ export class AuthService {
     return this.generateToken(user);
   }
 
-  async getUserIdFromToken(token: string): Promise<string | null> {
+  async getUserIdFromToken(res: Response): Promise<string | null> {
+    const authHeader = res.req.headers.authorization;
+    const token = authHeader.split(' ')[1];
+
     try {
       const decodedToken = await this.jwtService.verify(token);
       return decodedToken.id;

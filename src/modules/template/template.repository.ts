@@ -7,7 +7,7 @@ import { ConflictException, InternalServerErrorException } from '@nestjs/common'
 export class TemplateRepository {
   constructor(@InjectModel(Template.name) private readonly templateModel: Model<Template>) {}
 
-  async create(createTemplateDto: CreateTemplateDto, session: ClientSession) {
+  async create(createTemplateDto: CreateTemplateDto, session: ClientSession, userId: string) {
     let template = await this.getTemplateById(createTemplateDto.templateId);
 
     if (template) {
@@ -26,6 +26,7 @@ export class TemplateRepository {
         town: createTemplateDto.town,
         postCode: createTemplateDto.postCode,
         _id: createTemplateDto.templateId,
+        userId,
       });
 
       template = await template.save({ session });

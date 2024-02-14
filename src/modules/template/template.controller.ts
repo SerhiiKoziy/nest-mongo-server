@@ -23,7 +23,7 @@ export class TemplateController {
     session.startTransaction();
 
     try {
-      const template = await this.templateInvoice.create(createTemplateDto, session);
+      const template = await this.templateInvoice.create(createTemplateDto, session, res);
       await session.commitTransaction();
       return res.status(HttpStatus.OK).send(template);
     } catch (error) {
