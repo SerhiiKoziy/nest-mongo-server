@@ -23,6 +23,9 @@ export class Invoice extends Document {
   @ApiProperty({ example: '89a8f3b2246071a4b8b21f69', description: 'User ID' })
   @Prop({ required: true })
   userId: string;
+
+  @Prop({ required: true })
+  createdAt: Date;
 }
 
 export const InvoiceSchema = SchemaFactory.createForClass(Invoice);

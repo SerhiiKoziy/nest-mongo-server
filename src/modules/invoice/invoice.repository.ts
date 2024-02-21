@@ -22,6 +22,7 @@ export class InvoiceRepository {
         recipientEmail: createInvoiceDto.recipientEmail,
         details: createInvoiceDto.details,
         _id: createInvoiceDto.invoiceId,
+        createdAt: new Date(),
         userId,
       });
 
