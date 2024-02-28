@@ -14,4 +14,10 @@ export class TemplateService {
 
     return await this.templateRepository.create(createTemplateDto, session, userId);
   }
+
+  async getTemplateByUserId(res: Response) {
+    const userId = await this.authService.getUserIdFromToken(res);
+
+    return await this.templateRepository.getOneByUserId(userId);
+  }
 }

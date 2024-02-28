@@ -51,4 +51,15 @@ export class TemplateRepository {
 
     return template;
   }
+
+  async getOneByUserId(userId: string): Promise<Template> {
+    let template: Template;
+    try {
+      template = await this.templateModel.findOne({ userId }).exec();
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+
+    return template;
+  }
 }

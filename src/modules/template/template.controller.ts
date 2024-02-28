@@ -1,7 +1,7 @@
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Connection } from 'mongoose';
 import { Response } from 'express';
-import { BadRequestException, Body, Controller, HttpCode, HttpStatus, Post, Res, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, Post, Res, UseGuards } from '@nestjs/common';
 import { InjectConnection } from '@nestjs/mongoose';
 
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -12,7 +12,7 @@ import { CreateTemplateDto } from './dto/createTemplate.dto';
 @ApiTags('Template')
 @Controller('template')
 export class TemplateController {
-  constructor(@InjectConnection() private readonly mongoConnection: Connection, private templateInvoice: TemplateService) {}
+  constructor(@InjectConnection() private readonly mongoConnection: Connection, private templateService: TemplateService) {}
 
   @ApiOperation({ summary: 'Create template invoice' })
   @ApiResponse({ status: 200, type: Template })
@@ -23,7 +23,7 @@ export class TemplateController {
     session.startTransaction();
 
     try {
-      const template = await this.templateInvoice.create(createTemplateDto, session, res);
+      const template = await this.templateService.create(createTemplateDto, session, res);
       await session.commitTransaction();
       return res.status(HttpStatus.OK).send(template);
     } catch (error) {
@@ -32,5 +32,15 @@ export class TemplateController {
     } finally {
       await session.endSession();
     }
+  }
+
+  @ApiOperation({ summary: 'Get template by ID' })
+  @ApiResponse({ status: 200, type: Template })
+  @UseGuards(JwtAuthGuard)
+  @Get('/getTemplate')
+  async getTemplateById(@Res() res: Response) {
+    const template = await this.templateService.getTemplateByUserId(res);
+
+    return res.status(HttpStatus.OK).send(template);
   }
 }
