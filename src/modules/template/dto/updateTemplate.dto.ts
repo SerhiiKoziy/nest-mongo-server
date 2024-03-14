@@ -1,6 +1,6 @@
 import { IsOptional, IsString } from 'class-validator';
 
-export class CreateTemplateDto {
+export class UpdateTemplateDto {
   @IsString()
   @IsOptional()
   firstName: string;
@@ -40,8 +40,4 @@ export class CreateTemplateDto {
   @IsString()
   @IsOptional()
   postCode: string;
-
-  @IsString()
-  @IsOptional()
-  templateId: string;
 }

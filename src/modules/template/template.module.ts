@@ -5,6 +5,7 @@ import { TemplateController } from './template.controller';
 import { TemplateRepository } from './template.repository';
 import { TemplateService } from './template.service';
 import { AuthModule } from '../auth/auth.module';
+import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [
@@ -15,9 +16,10 @@ import { AuthModule } from '../auth/auth.module';
       },
     ]),
     forwardRef(() => AuthModule),
+    forwardRef(() => UserModule),
   ],
   controllers: [TemplateController],
   providers: [TemplateService, TemplateRepository],
-  exports: [TemplateService],
+  exports: [TemplateService, TemplateRepository],
 })
 export class TemplateModule {}

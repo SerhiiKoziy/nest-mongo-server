@@ -13,12 +13,20 @@ import { AuthService } from '../auth/auth.service';
 import { UserService } from '../user/user.service';
 
 const pdfsFolderPath = path.join(process.cwd(), 'pdfs');
-const htmlTemplatePath = path.join(process.cwd(), 'invoice', 'products', 'template.html');
+const htmlTemplatePath = path.join(
+  process.cwd(),
+  'invoice',
+  'products',
+  'template.html',
+);
 const htmlTemplate = fs.readFileSync(htmlTemplatePath, { encoding: 'utf-8' });
 
 @Injectable()
 export class PdfService {
-  constructor(private authService: AuthService, private userService: UserService) {}
+  constructor(
+    private authService: AuthService,
+    private userService: UserService,
+  ) {}
 
   async generatePDF(data: Invoice, filename: string): Promise<Buffer> {
     try {
@@ -59,26 +67,43 @@ export class PdfService {
       const page = await browser.newPage();
       await page.setContent(htmlContent);
 
-      return await page.pdf({ path: path.join(pdfsFolderPath, filename), format: 'A4' });
+      return await page.pdf({
+        path: path.join(pdfsFolderPath, filename),
+        format: 'A4',
+      });
     } catch (err) {
       throw new HttpException(err, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
-  async acceptOffer(pdfDto: PdfDto, res: Response): Promise<{ message?: string }> {
-    const userId = await this.authService.getUserIdFromToken(res);
+  async acceptOffer(
+    pdfDto: PdfDto,
+    res: Response,
+  ): Promise<{ message?: string }> {
+    const user = await this.authService.getUserFromToken(res);
 
     try {
-      const { email: senderEmail } = await this.userService.getUserById(userId);
+      const { email: senderEmail } = await this.userService.getUserById(
+        user.id,
+      );
       const matchingFile = await this.findPdfFileByPdfId(pdfDto.pdfId);
 
       if (matchingFile) {
         const filePath = path.join(pdfsFolderPath, matchingFile);
         const fileContent = fs.readFileSync(filePath);
 
-        await this.sendInvoice(pdfDto.recipientEmail, pdfDto.pdfId, fileContent);
+        await this.sendInvoice(
+          pdfDto.recipientEmail,
+          pdfDto.pdfId,
+          fileContent,
+        );
 
-        await this.sendInvoiceCopy(senderEmail, pdfDto.recipientEmail, pdfDto.pdfId, fileContent);
+        await this.sendInvoiceCopy(
+          senderEmail,
+          pdfDto.recipientEmail,
+          pdfDto.pdfId,
+          fileContent,
+        );
 
         fs.unlink(filePath, (unlinkErr) => {
           if (unlinkErr) {
@@ -88,10 +113,16 @@ export class PdfService {
 
         return { message: 'PDF sent successfully' };
       } else {
-        throw new HttpException('Matching file not found or already declined.', HttpStatus.NOT_FOUND);
+        throw new HttpException(
+          'Matching file not found or already declined.',
+          HttpStatus.NOT_FOUND,
+        );
       }
     } catch (error) {
-      throw new HttpException(`Error accepting offer: ${error.message}`, HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        `Error accepting offer: ${error.message}`,
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 
@@ -109,14 +140,25 @@ export class PdfService {
 
         return { message: 'Offer declined' };
       } else {
-        throw new HttpException('Matching file not found or already declined.', HttpStatus.NOT_FOUND);
+        throw new HttpException(
+          'Matching file not found or already declined.',
+          HttpStatus.NOT_FOUND,
+        );
       }
     } catch (error) {
-      throw new HttpException(`Error declining offer: ${error.message}`, HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        `Error declining offer: ${error.message}`,
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 
-  private async sendInvoiceCopy(senderEmail: string, recipientEmail: string, pdfId: string, fileContent: Buffer): Promise<void> {
+  private async sendInvoiceCopy(
+    senderEmail: string,
+    recipientEmail: string,
+    pdfId: string,
+    fileContent: Buffer,
+  ): Promise<void> {
     const transporter = nodemailer.createTransport({
       service: process.env.MAIL_HOST,
       auth: {
@@ -142,7 +184,11 @@ export class PdfService {
     await transporter.sendMail(senderMailOptions);
   }
 
-  private async sendInvoice(recipientEmail: string, pdfId: string, fileContent: Buffer): Promise<void> {
+  private async sendInvoice(
+    recipientEmail: string,
+    pdfId: string,
+    fileContent: Buffer,
+  ): Promise<void> {
     const transporter = nodemailer.createTransport({
       service: process.env.MAIL_HOST,
       auth: {

@@ -39,10 +39,6 @@ export class Template extends Document {
   @ApiProperty({ example: '203390', description: 'Post code' })
   @Prop()
   postCode: string;
-
-  @ApiProperty({ example: '89a8f3b2246071a4b8b21f69', description: 'User ID' })
-  @Prop()
-  userId: string;
 }
 
 export const TemplateSchema = SchemaFactory.createForClass(Template);

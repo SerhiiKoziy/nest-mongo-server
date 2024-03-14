@@ -11,7 +11,11 @@ import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectModel(User.name) private userModel: Model<User>, private readonly userRepository: UserRepository, private rolesService: RolesService) {}
+  constructor(
+    @InjectModel(User.name) private userModel: Model<User>,
+    readonly userRepository: UserRepository,
+    readonly rolesService: RolesService,
+  ) {}
 
   async createUser(createUserDto: CreateUserDto, session: ClientSession) {
     const role = await this.rolesService.getRoleByValue('USER');
@@ -57,7 +61,10 @@ export class UserService {
       return user;
     }
 
-    throw new HttpException('User or password not found', HttpStatus.BAD_REQUEST);
+    throw new HttpException(
+      'User or password not found',
+      HttpStatus.BAD_REQUEST,
+    );
   }
 
   async banUser(dto: BanUserDto) {
@@ -76,7 +83,9 @@ export class UserService {
 
   async updateUser(user: User): Promise<User> {
     try {
-      return await this.userModel.findByIdAndUpdate(user._id, user, { new: true });
+      return await this.userModel.findByIdAndUpdate(user._id, user, {
+        new: true,
+      });
     } catch (error) {
       throw new Error('Failed to update user in the database');
     }

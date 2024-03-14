@@ -11,12 +11,24 @@ import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class InvoiceService {
-  constructor(private readonly invoiceRepository: InvoiceRepository, private pdfService: PdfService, private authService: AuthService) {}
+  constructor(
+    private readonly invoiceRepository: InvoiceRepository,
+    private pdfService: PdfService,
+    private authService: AuthService,
+  ) {}
 
-  async create(createInvoiceDto: CreateInvoiceDto, session: ClientSession, res: Response) {
-    const userId = await this.authService.getUserIdFromToken(res);
+  async create(
+    createInvoiceDto: CreateInvoiceDto,
+    session: ClientSession,
+    res: Response,
+  ) {
+    const user = await this.authService.getUserFromToken(res);
 
-    const createInvoice = await this.invoiceRepository.createInvoice(createInvoiceDto, session, userId);
+    const createInvoice = await this.invoiceRepository.createInvoice(
+      createInvoiceDto,
+      session,
+      user.id,
+    );
     await this.generateAndSendPDF(createInvoice, res);
   }
 
@@ -25,19 +37,25 @@ export class InvoiceService {
   }
 
   async getAllInvoices(res: Response): Promise<Invoice[]> {
-    const userId = await this.authService.getUserIdFromToken(res);
+    const user = await this.authService.getUserFromToken(res);
 
-    return await this.invoiceRepository.getAll(userId);
+    return await this.invoiceRepository.getAll(user.id);
   }
 
   private async generateAndSendPDF(createInvoice: Invoice, res: Response) {
     try {
       const dynamicFilename = `generated-${Date.now()}.pdf`;
-      const result = await this.pdfService.generatePDF(createInvoice, dynamicFilename);
+      const result = await this.pdfService.generatePDF(
+        createInvoice,
+        dynamicFilename,
+      );
 
       const pdfStream = Readable.from(result);
       res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', `attachment; filename=${dynamicFilename}`);
+      res.setHeader(
+        'Content-Disposition',
+        `attachment; filename=${dynamicFilename}`,
+      );
 
       pdfStream.pipe(res);
     } catch (error) {

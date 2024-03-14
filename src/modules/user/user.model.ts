@@ -11,7 +11,10 @@ export class User extends Document {
   @Prop({ required: true, unique: true })
   email: string;
 
-  @ApiProperty({ example: '2023-04-17T15:46:20.947Z', description: 'createdAt' })
+  @ApiProperty({
+    example: '2023-04-17T15:46:20.947Z',
+    description: 'createdAt',
+  })
   @Prop({ default: Date.now })
   createdAt: Date;
 
@@ -30,6 +33,10 @@ export class User extends Document {
   @ApiProperty({ example: 'Uncontrolled', description: 'banReason' })
   @Prop({ default: '' })
   banReason: string;
+
+  @ApiProperty({ example: 'Template', description: 'template' })
+  @Prop({ required: true, unique: true })
+  template: Types.ObjectId;
 }
 
 export const UserSchema: Schema = new Schema(
@@ -55,6 +62,11 @@ export const UserSchema: Schema = new Schema(
       type: SchemaTypes.ObjectId,
       ref: 'Role',
     },
+    template: {
+      type: SchemaTypes.ObjectId,
+      ref: 'Template',
+      required: true,
+    },
   },
   { toJSON: { virtuals: true }, toObject: { virtuals: true } },
 );
@@ -69,4 +81,16 @@ UserSchema.pre('findById', function () {
 
 UserSchema.pre('find', function () {
   this.populate('role');
+});
+
+UserSchema.pre('findOne', function () {
+  this.populate('template');
+});
+
+UserSchema.pre('findById', function () {
+  this.populate('template');
+});
+
+UserSchema.pre('find', function () {
+  this.populate('template');
 });

@@ -1,12 +1,20 @@
-import { ConflictException, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { ClientSession, Model, Schema as MongooseSchema } from 'mongoose';
 import { User } from './user.model';
 import { CreateUserDto } from './dto/createUser.dto';
 import { GetQueryDto } from '../../dto/getQueryDto';
+import { TemplateRepository } from '../template/template.repository';
 
 export class UserRepository {
-  constructor(@InjectModel(User.name) private readonly userModel: Model<User>) {}
+  constructor(
+    @InjectModel(User.name) private readonly userModel: Model<User>,
+    readonly templateRepository: TemplateRepository,
+  ) {}
 
   async createUser(createUserDto: CreateUserDto, session: ClientSession) {
     let user = await this.getUserByEmail(createUserDto.email);
@@ -16,11 +24,13 @@ export class UserRepository {
     }
 
     try {
+      const template = await this.templateRepository.create();
       user = await this.userModel.create({
         name: createUserDto.name,
         email: createUserDto.email,
         password: createUserDto.password,
         role: createUserDto.role,
+        template: template._id,
       });
 
       user = await user.save({ session });
@@ -68,7 +78,9 @@ export class UserRepository {
   async getUserByEmail(email: string) {
     let user;
     try {
-      user = await this.userModel.findOne({ email }, 'name email password role').exec();
+      user = await this.userModel
+        .findOne({ email }, 'name email password role')
+        .exec();
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
@@ -87,9 +99,20 @@ export class UserRepository {
 
     try {
       if (limit === 0) {
-        users = await this.userModel.find().populate('role').skip(from).sort({ createdAt: -1 }).exec();
+        users = await this.userModel
+          .find()
+          .populate('role')
+          .skip(from)
+          .sort({ createdAt: -1 })
+          .exec();
       } else {
-        users = await this.userModel.find().populate('role').skip(from).limit(limit).sort({ createdAt: -1 }).exec();
+        users = await this.userModel
+          .find()
+          .populate('role')
+          .skip(from)
+          .limit(limit)
+          .sort({ createdAt: -1 })
+          .exec();
       }
 
       let response;

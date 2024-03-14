@@ -1,4 +1,9 @@
-import { UnauthorizedException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  UnauthorizedException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { ClientSession } from 'mongoose';
 import { Response } from 'express';
 import * as bcrypt from 'bcryptjs';
@@ -11,14 +16,20 @@ import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
-  constructor(private userService: UserService, private jwtService: JwtService) {}
+  constructor(
+    private userService: UserService,
+    private jwtService: JwtService,
+  ) {}
 
   async login(loginDto: LoginDto) {
     try {
       const user = await this.validateUser(loginDto);
       return await this.generateToken(user);
     } catch (error) {
-      throw new HttpException('Wrong email or password', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Wrong email or password',
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 
@@ -30,20 +41,25 @@ export class AuthService {
     }
 
     const hashPassword = await bcrypt.hash(userDto.password, 5);
-    const user = await this.userService.createUser({ ...userDto, password: hashPassword }, session);
+    const user = await this.userService.createUser(
+      { ...userDto, password: hashPassword },
+      session,
+    );
 
     return this.generateToken(user);
   }
 
-  async getUserIdFromToken(res: Response): Promise<string | null> {
+  async getUserFromToken(res: Response): Promise<User | null> {
     const authHeader = res.req.headers.authorization;
     const token = authHeader.split(' ')[1];
 
     try {
-      const decodedToken = await this.jwtService.verify(token);
-      return decodedToken.id;
+      return await this.jwtService.verify(token);
     } catch (error) {
-      throw new HttpException('Invalid or expired token', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Invalid or expired token',
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 
@@ -53,6 +69,7 @@ export class AuthService {
       email: user.email,
       id: user.id,
       role: user.role,
+      template: user.template,
     };
 
     return {
@@ -62,7 +79,10 @@ export class AuthService {
 
   private async validateUser(loginDto: LoginDto) {
     const user = await this.userService.getUserByEmail(loginDto.email);
-    const passwordEquals = await bcrypt.compare(loginDto.password, user.password);
+    const passwordEquals = await bcrypt.compare(
+      loginDto.password,
+      user.password,
+    );
 
     if (user && passwordEquals) {
       return user;
